@@ -18,8 +18,8 @@
 *   Copyright (c) 2014 Ramon Santamaria (@raysan5)
 *
 ********************************************************************************************/
-
 #include "raylib.h"
+#include <iostream>
 
 #define RAYGUI_IMPLEMENTATION
 #define RAYGUI_SUPPORT_ICONS
@@ -27,40 +27,29 @@
 
 int main(int argc, char* argv[])
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
     int screenWidth = 800;
     int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "ASTEROIDS!");
 
     SetTargetFPS(60);
-    //--------------------------------------------------------------------------------------
-
-    // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    Texture img = LoadTexture("Images/ship.png");
+    img.height /= 3;
+    img.width /= 3;
+    
+    while (!WindowShouldClose())
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        // TODO: Update your variables here
-        //----------------------------------------------------------------------------------
-
-        // Draw
-        //----------------------------------------------------------------------------------
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
 
         DrawText("ASTEROIDS!", 190, 200, 20, LIGHTGRAY);
+        DrawTexture(img, 400, 225, WHITE);
 
         EndDrawing();
-        //----------------------------------------------------------------------------------
     }
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------   
-    CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+    CloseWindow();
 
     return 0;
 }

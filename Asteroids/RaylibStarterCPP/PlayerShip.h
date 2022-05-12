@@ -37,11 +37,11 @@ private:
 
 	// The rotation and scale of the player's ship.
 	float rotation = 0;
-	float scale = 0.25f;
+	float scale = 0.2f;
 
 	// The speed at which the player can turn/accelerate
 	float rotSpeed = 2.f;
-	float accelSpeed = -0.135f;
+	float accelSpeed = -0.12f;
 
 	// A value representing the drag of the ship, slowing the ship down.
 	float drag = 0.99f;

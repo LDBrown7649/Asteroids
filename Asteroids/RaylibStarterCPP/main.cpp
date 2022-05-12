@@ -22,6 +22,8 @@
 #include <iostream>
 #include "PlayerShip.h"
 #include "Asteroid.h"
+#include <time.h>
+#include <random>
 
 #define RAYGUI_IMPLEMENTATION
 #define RAYGUI_SUPPORT_ICONS
@@ -33,6 +35,8 @@ int main(int argc, char* argv[])
     int screenWidth = 800;
     int screenHeight = 800;
 
+    srand(time(nullptr));
+
     InitWindow(screenWidth, screenHeight, "ASTEROIDS!");
     
     // Limits the game to running at 60 fps.
@@ -40,16 +44,33 @@ int main(int argc, char* argv[])
 
     // Creates the ship that the player controls.
     PlayerShip ship = PlayerShip();
-    
+
+    // Creates instances of asteroids.
+    Asteroid a1 = Asteroid(3, rand());
+    Asteroid a2 = Asteroid(2, rand());
+    Asteroid a3 = Asteroid(1, rand());
+    Asteroid a4 = Asteroid(2, rand());
+    Asteroid a5 = Asteroid(3, rand());
+
     // Continuously updates and draws the ship until the game should close.
     while (!WindowShouldClose())
     {
         ship.OnUpdate();
+        a1.Update();
+        a2.Update();
+        a3.Update();
+        a4.Update();
+        a5.Update();
         BeginDrawing();
 
         ClearBackground(BLACK);
 
         ship.OnDraw();
+        a1.Draw();
+        a2.Draw();
+        a3.Draw();
+        a4.Draw();
+        a5.Draw();
 
         EndDrawing();
     }

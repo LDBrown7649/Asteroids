@@ -21,6 +21,7 @@
 #include "raylib.h"
 #include <iostream>
 #include "PlayerShip.h"
+#include "Asteroid.h"
 
 #define RAYGUI_IMPLEMENTATION
 #define RAYGUI_SUPPORT_ICONS
@@ -36,8 +37,11 @@ int main(int argc, char* argv[])
     
     // Limits the game to running at 60 fps.
     SetTargetFPS(60);
+
+    // Creates the ship that the player controls.
     PlayerShip ship = PlayerShip();
     
+    // Continuously updates and draws the ship until the game should close.
     while (!WindowShouldClose())
     {
         ship.OnUpdate();

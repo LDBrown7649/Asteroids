@@ -7,7 +7,12 @@ public:
 	// Bullet constructors and a destructor.
 	Bullet();
 	~Bullet();
+
+	// A constructor for generating new bullets at the player's location.
 	Bullet(Vector2* shipPos, float shipRot);
+	
+	// A flag for verifying if this object should be destroyed.
+	bool remove = false;
 
 	// Used for moving the bullets.
 	void Update();
@@ -23,11 +28,19 @@ private:
 	Vector2 shootVector = {0, 0};
 
 	// How fast the bullet should be travelling.
-	float shootSpeed = 11.f;
-	Texture img;
-	float scale = 1.f;
+	float shootSpeed = 15;
 
-	float rot;
+	// The image representing the bullet.
+	Texture img = Texture();
+
+	// The rotation and scale of the bullet, used for rendering.
+	float scale = 1.f;
+	float rot = 0;
+
+	// The amount of frames that the bullet has existed for, and how many frames it can exist for before being destroyed.
+	int maxLife = 300;
+	int lifeExpended = 0;
+
 
 };
 

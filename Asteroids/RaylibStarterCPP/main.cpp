@@ -20,6 +20,7 @@
 ********************************************************************************************/
 #include "raylib.h"
 #include <iostream>
+#include "PlayerShip.h"
 
 #define RAYGUI_IMPLEMENTATION
 #define RAYGUI_SUPPORT_ICONS
@@ -27,24 +28,34 @@
 
 int main(int argc, char* argv[])
 {
-    int screenWidth = 800;
-    int screenHeight = 450;
+    int screenWidth = 600;
+    int screenHeight = 600;
 
     InitWindow(screenWidth, screenHeight, "ASTEROIDS!");
 
     SetTargetFPS(60);
-    Texture img = LoadTexture("Images/ship.png");
-    img.height /= 3;
-    img.width /= 3;
+    PlayerShip ship = PlayerShip();
+    Texture img2 = LoadTexture("Images/asteroid2.png");
+    Texture img3 = LoadTexture("Images/asteroid3.png");
     
     while (!WindowShouldClose())
     {
+        ship.OnUpdate();
         BeginDrawing();
 
-        ClearBackground(RAYWHITE);
+        ClearBackground(BLACK);
 
         DrawText("ASTEROIDS!", 190, 200, 20, LIGHTGRAY);
-        DrawTexture(img, 400, 225, WHITE);
+        Vector2 pos2 = Vector2();
+        Vector2 pos3 = Vector2();
+        pos2.x = 600.f;
+        pos2.y = 50.f; 
+        pos3.x = 0;
+        pos3.y = 0;
+        DrawTextureEx(img2, pos2, 0, 20, WHITE);
+        DrawTextureEx(img3, pos3, 0, 20, WHITE);
+
+        ship.OnDraw();
 
         EndDrawing();
     }

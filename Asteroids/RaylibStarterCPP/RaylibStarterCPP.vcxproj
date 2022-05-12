@@ -168,7 +168,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="GameController.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PlayerShip.cpp" />
+    <ClCompile Include="UFO.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="GameController.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="PlayerShip.h" />
+    <ClInclude Include="UFO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

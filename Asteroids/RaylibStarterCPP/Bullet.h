@@ -25,7 +25,7 @@ private:
 	// How fast the bullet should be travelling.
 	float shootSpeed = 11.f;
 	Texture img;
-	float scale = 0.5f;
+	float scale = 1.f;
 
 	float rot;
 

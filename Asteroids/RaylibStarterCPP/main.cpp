@@ -28,15 +28,15 @@
 
 int main(int argc, char* argv[])
 {
-    int screenWidth = 600;
-    int screenHeight = 600;
+    // The dimensions of the screen.
+    int screenWidth = 800;
+    int screenHeight = 800;
 
     InitWindow(screenWidth, screenHeight, "ASTEROIDS!");
-
+    
+    // Limits the game to running at 60 fps.
     SetTargetFPS(60);
     PlayerShip ship = PlayerShip();
-    Texture img2 = LoadTexture("Images/asteroid2.png");
-    Texture img3 = LoadTexture("Images/asteroid3.png");
     
     while (!WindowShouldClose())
     {
@@ -44,16 +44,6 @@ int main(int argc, char* argv[])
         BeginDrawing();
 
         ClearBackground(BLACK);
-
-        DrawText("ASTEROIDS!", 190, 200, 20, LIGHTGRAY);
-        Vector2 pos2 = Vector2();
-        Vector2 pos3 = Vector2();
-        pos2.x = 600.f;
-        pos2.y = 50.f; 
-        pos3.x = 0;
-        pos3.y = 0;
-        DrawTextureEx(img2, pos2, 0, 20, WHITE);
-        DrawTextureEx(img3, pos3, 0, 20, WHITE);
 
         ship.OnDraw();
 

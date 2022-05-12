@@ -3,7 +3,7 @@
 
 PlayerShip::PlayerShip()
 {
-	img = LoadTexture("Images/Ship.png");
+	img = LoadTexture("Images/ShipBetter.png");
 }
 
 PlayerShip::~PlayerShip()
@@ -58,17 +58,17 @@ void PlayerShip::OnUpdate()
 	pos.y += vel.y;
 	pos.x += vel.x;
 
-	if (pos.x > 600) {
-		pos.x -= 600;
+	if (pos.x > 800) {
+		pos.x -= 800;
 	}
 	if (pos.x < 0) {
-		pos.x += 600;
+		pos.x += 800;
 	}
-	if (pos.y > 600) {
-		pos.y -= 600;
+	if (pos.y > 800) {
+		pos.y -= 800;
 	}
 	if (pos.y  < 0) {
-		pos.y += 600;
+		pos.y += 800;
 	}
 	if(activeBullet != nullptr)
 	activeBullet->Update();

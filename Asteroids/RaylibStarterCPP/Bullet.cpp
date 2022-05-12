@@ -11,8 +11,21 @@ Bullet::~Bullet()
 
 void Bullet::Update()
 {
-	pos.x += shootDirection.x;
-	pos.y += shootDirection.y;
+	pos.x += shootVector.x;
+	pos.y += shootVector.y;
+
+	if (pos.x > 600) {
+		pos.x -= 600;
+	}
+	if (pos.x < 0) {
+		pos.x += 600;
+	}
+	if (pos.y > 600) {
+		pos.y -= 600;
+	}
+	if (pos.y < 0) {
+		pos.y += 600;
+	}
 }
 
 Bullet::Bullet(Vector2* shipPos, float shipRot)
@@ -20,12 +33,12 @@ Bullet::Bullet(Vector2* shipPos, float shipRot)
 	rot = shipRot;
 	shipRot *= 0.0174533;
 	pos = *shipPos;
-	pos.x += cos(shipRot) * 12.5f;
-	pos.y -= sin(shipRot) * 12.5f;
+	pos.x -= sin(shipRot) * 12.5f;
+	pos.y -= cos(shipRot) * 12.5f;
 	img = LoadTexture("Images/Bullet.png");
-	shootDirection = { -(float)sin(shipRot), -(float)cos(shipRot) };
-	shootDirection.x *= shootSpeed;
-	shootDirection.y *= shootSpeed;
+	shootVector = { -(float)sin(shipRot), -(float)cos(shipRot) };
+	shootVector.x *= shootSpeed;
+	shootVector.y *= shootSpeed;
 }
 
 void Bullet::Draw()

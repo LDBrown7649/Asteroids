@@ -14,7 +14,13 @@ PlayerShip::~PlayerShip()
 
 void PlayerShip::OnDraw()
 {
-	Vector2 drawPos = { pos.x - cos(rotation * 0.0174533) * img.width * scale / 2, pos.y + sin(rotation * 0.0174533) * img.height * scale / 2 };
+	// Moves the position of the object to be centred along the top edge.
+	Vector2 drawPos = { pos.x - cos(rotation * 0.0174533f) * img.width * scale / 2, pos.y + sin(rotation * 0.0174533f) * img.height * scale / 2 };
+
+	// Moves the position of the object to be centred along the side edge.
+	drawPos.x -= sin(rotation * 0.0174533f) * img.width * scale / 2;
+	drawPos.y -= cos(rotation * 0.0174533f) * img.width * scale / 2;
+
 	DrawTextureEx(img, drawPos, -rotation, scale, WHITE);
 	if(activeBullet != nullptr)
 	activeBullet->Draw();
@@ -52,17 +58,17 @@ void PlayerShip::OnUpdate()
 	pos.y += vel.y;
 	pos.x += vel.x;
 
-	if (pos.x > 600 + img.width) {
-		pos.x -= 600 + img.width;
+	if (pos.x > 600) {
+		pos.x -= 600;
 	}
-	if (pos.x < -img.width) {
-		pos.x += 600 + img.width;
+	if (pos.x < 0) {
+		pos.x += 600;
 	}
-	if (pos.y > 600 + img.width) {
-		pos.y -= 600 + img.width;
+	if (pos.y > 600) {
+		pos.y -= 600;
 	}
-	if (pos.y < -img.width) {
-		pos.y += 600 + img.width;
+	if (pos.y  < 0) {
+		pos.y += 600;
 	}
 	if(activeBullet != nullptr)
 	activeBullet->Update();

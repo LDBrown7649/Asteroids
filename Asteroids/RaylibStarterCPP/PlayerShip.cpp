@@ -4,6 +4,8 @@ PlayerShip::PlayerShip()
 {
 	// Loads the associated image of the ship.
 	img = LoadTexture("Images/Ship.png");
+	pos = { 400, 400 };
+	scale = 0.2f;
 }
 
 PlayerShip::~PlayerShip()
@@ -20,14 +22,9 @@ PlayerShip::~PlayerShip()
 	bulletQueue.clear();
 }
 
-void PlayerShip::OnDraw()
+void PlayerShip::Draw()
 {
-	// Calculates the centre of the image.
-	Vector2 drawPos = this->DrawOffset();
-
-	// Draws the ship onto the screen.
-	DrawTextureEx(img, drawPos, -rotation, scale, WHITE);
-	DrawCircle(pos.x, pos.y, 5, RED);
+	GameObject::Draw();
 
 	// Draws each bullet to the screen (if there are bullets to draw).
 	if (!bulletQueue.empty()) {
@@ -37,7 +34,7 @@ void PlayerShip::OnDraw()
 	}
 }
 
-void PlayerShip::OnUpdate()
+void PlayerShip::Update()
 {
 	// Converts the rotation from degrees to radians.
 	float Rad = rotation * DEG2RAD;
@@ -73,23 +70,7 @@ void PlayerShip::OnUpdate()
 	vel.x *= drag;
 	vel.y *= drag;
 
-	// Applies velocity to position.
-	pos.y += vel.y;
-	pos.x += vel.x;
-
-	// Allows the ship to wrap around the screen if it goes out of bounds.
-	if (pos.x > 800 + img.height / 2 * scale) {
-		pos.x -= 800;
-	}
-	if (pos.x < -img.height / 2 * scale) {
-		pos.x += 800;
-	}
-	if (pos.y > 800 + img.height / 2 * scale) {
-		pos.y -= 800;
-	}
-	if (pos.y  < -img.height / 2 * scale) {
-		pos.y += 800;
-	}
+	GameObject::Update();
 
 	// Fires a bullet from the front of the player's ship.
 	if (IsKeyPressed(KEY_SPACE)) {
@@ -116,18 +97,6 @@ void PlayerShip::OnUpdate()
 		}
 		
 	}
-}
-
-Vector2 PlayerShip::DrawOffset()
-{
-	// Moves the position of the object to be centred along the top edge.
-	Vector2 centredVec = { pos.x - cos(rotation * DEG2RAD) * img.width * scale / 2, pos.y + sin(rotation * DEG2RAD) * img.height * scale / 2 };
-
-	// Moves the position of the object to be centred along the side edge.
-	centredVec.x -= sin(rotation * DEG2RAD) * img.width * scale / 2;
-	centredVec.y -= cos(rotation * DEG2RAD) * img.width * scale / 2;
-
-	return centredVec;
 }
 
 void PlayerShip::Shoot()

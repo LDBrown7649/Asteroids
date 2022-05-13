@@ -78,29 +78,29 @@ int main(int argc, char* argv[])
     PlayerShip ship = PlayerShip();
 
     // Creates instances of asteroids.
-    for (int i = 0; i < 20; i++) {
-        asteroids.push_back(new Asteroid(1, rand()));
+    for (int i = 0; i < 1; i++) {
+        asteroids.push_back(new Asteroid(3, rand()));
     }
 
     // Continuously updates and draws the ship until the game should close.
     while (!WindowShouldClose())
     {
         // Updates the ship and each asteroid in the scene.
-        ship.OnUpdate();
         for (Asteroid* as : asteroids) {
             as->Update();
             CheckCollisions(&ship, as);
         }
+        ship.Update();
 
         BeginDrawing();
 
         ClearBackground(BLACK);
 
         // Draws the ship and each asteroid to the screen.
-        ship.OnDraw();
         for (Asteroid* as : asteroids) {
             as->Draw();
         }
+        ship.Draw();
 
         EndDrawing();
     }

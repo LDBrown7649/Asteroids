@@ -4,8 +4,6 @@
 class Bullet
 {
 public:
-	// Bullet constructors and a destructor.
-	Bullet();
 	~Bullet();
 
 	// A constructor for generating new bullets at the player's location.
@@ -19,6 +17,14 @@ public:
 
 	// Used for drawing the bullet to the screen.
 	void Draw();
+
+	// A function for calculating the draw offset.
+	Vector2 DrawOffset();
+
+	// A function for returning the object's centre point.
+	Vector2 GetPos() { return pos; }
+
+	float GetSize() { return scale * img.width; }
 
 private:
 	// Stores the bullet's current position in the world.

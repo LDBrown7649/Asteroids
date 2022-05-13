@@ -28,6 +28,17 @@ public:
 		return health;
 	}
 
+	// A boolean for tracking if a collision has occurred.
+	bool collided = false;
+
+	// A function for calculating the draw offset.
+	Vector2 DrawOffset();
+
+	// A function for returning the object's centre point.
+	Vector2 GetPos() { return pos; }
+
+	float GetSize() { return scale * img.width; }
+
 private:
 	// The position and velocity of the asteroid.
 	Vector2 pos = { 0, 0 };
@@ -40,6 +51,7 @@ private:
 	float rotation = 0;
 	float scale = 0.5f;
 
+	// The max speed that the asteroid can travel at.
 	int maxSpeed = 2;
 
 	// The asteroid's current health, representing how many times it can be broken apart before being destroyed.

@@ -22,15 +22,12 @@ PlayerShip::~PlayerShip()
 
 void PlayerShip::OnDraw()
 {
-	// Moves the position of the object to be centred along the top edge.
-	Vector2 drawPos = { pos.x - cos(rotation * 0.0174533f) * img.width * scale / 2, pos.y + sin(rotation * 0.0174533f) * img.height * scale / 2 };
-
-	// Moves the position of the object to be centred along the side edge.
-	drawPos.x -= sin(rotation * 0.0174533f) * img.width * scale / 2;
-	drawPos.y -= cos(rotation * 0.0174533f) * img.width * scale / 2;
+	// Calculates the centre of the image.
+	Vector2 drawPos = this->DrawOffset();
 
 	// Draws the ship onto the screen.
 	DrawTextureEx(img, drawPos, -rotation, scale, WHITE);
+	DrawCircle(pos.x, pos.y, 5, RED);
 
 	// Draws each bullet to the screen (if there are bullets to draw).
 	if (!bulletQueue.empty()) {
@@ -43,7 +40,7 @@ void PlayerShip::OnDraw()
 void PlayerShip::OnUpdate()
 {
 	// Converts the rotation from degrees to radians.
-	float Rad = rotation * 0.01745f;
+	float Rad = rotation * DEG2RAD;
 
 	// Resets acceleration to 0.
 	accel = { 0, 0 };
@@ -119,6 +116,18 @@ void PlayerShip::OnUpdate()
 		}
 		
 	}
+}
+
+Vector2 PlayerShip::DrawOffset()
+{
+	// Moves the position of the object to be centred along the top edge.
+	Vector2 centredVec = { pos.x - cos(rotation * DEG2RAD) * img.width * scale / 2, pos.y + sin(rotation * DEG2RAD) * img.height * scale / 2 };
+
+	// Moves the position of the object to be centred along the side edge.
+	centredVec.x -= sin(rotation * DEG2RAD) * img.width * scale / 2;
+	centredVec.y -= cos(rotation * DEG2RAD) * img.width * scale / 2;
+
+	return centredVec;
 }
 
 void PlayerShip::Shoot()

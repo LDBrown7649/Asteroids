@@ -24,20 +24,52 @@
 #include "Asteroid.h"
 #include <time.h>
 #include <random>
+#include <vector>
 
-#define RAYGUI_IMPLEMENTATION
-#define RAYGUI_SUPPORT_ICONS
-#include "raygui.h"
+
+void CheckCollisions(PlayerShip* ship, Asteroid* asteroid) {
+   // Retrieves the list of bullets from the ship object.
+   std::deque<Bullet*>* bullets = ship->GetBullets();
+
+   float asteroidSize = asteroid->GetSize() / 2.f;
+
+   // Retrieves the position of the asteroid.
+   Vector2 asteroidPos = asteroid->GetPos();
+
+   for (Bullet* bullet : *bullets) {
+       // Retrieves the position of the bullet.
+       Vector2 bulletPos = bullet->GetPos();
+
+       // Calculates the distance between the asteroid's centre and the bullet. If this distance is less than a threshold, a collision has occurred.
+       Vector2 bulletToAsteroid = { bulletPos.x - asteroidPos.x, bulletPos.y - asteroidPos.y };
+       float distance = sqrt(bulletToAsteroid.x * bulletToAsteroid.x + bulletToAsteroid.y * bulletToAsteroid.y);
+       if (distance < asteroidSize + bullet->GetSize() / 2.f) {
+           asteroid ->collided = true;
+       }
+   }
+
+   // Calculates if a collision has occurred between the ship and the asteroid by checking the distance between the object's centres.
+   Vector2 shipPos = ship->GetPos();
+   Vector2 shipToAsteroid = { shipPos.x - asteroidPos.x, shipPos.y - asteroidPos.y };
+   float distance = sqrt(shipToAsteroid.x * shipToAsteroid.x + shipToAsteroid.y * shipToAsteroid.y);
+   if (distance < asteroidSize + ship->GetSize() / 2.f) {
+       asteroid->collided = true;
+   }
+}
 
 int main(int argc, char* argv[])
 {
+    // Creates a vector of all asteroids.
+    std::vector<Asteroid*> asteroids;
+
     // The dimensions of the screen.
     int screenWidth = 800;
     int screenHeight = 800;
 
-    srand(time(nullptr));
-
     InitWindow(screenWidth, screenHeight, "ASTEROIDS!");
+
+    // Seeds the random generator.
+    srand((int)time(nullptr));
     
     // Limits the game to running at 60 fps.
     SetTargetFPS(60);
@@ -46,36 +78,41 @@ int main(int argc, char* argv[])
     PlayerShip ship = PlayerShip();
 
     // Creates instances of asteroids.
-    Asteroid a1 = Asteroid(3, rand());
-    Asteroid a2 = Asteroid(2, rand());
-    Asteroid a3 = Asteroid(1, rand());
-    Asteroid a4 = Asteroid(2, rand());
-    Asteroid a5 = Asteroid(3, rand());
+    for (int i = 0; i < 20; i++) {
+        asteroids.push_back(new Asteroid(1, rand()));
+    }
 
     // Continuously updates and draws the ship until the game should close.
     while (!WindowShouldClose())
     {
+        // Updates the ship and each asteroid in the scene.
         ship.OnUpdate();
-        a1.Update();
-        a2.Update();
-        a3.Update();
-        a4.Update();
-        a5.Update();
+        for (Asteroid* as : asteroids) {
+            as->Update();
+            CheckCollisions(&ship, as);
+        }
+
         BeginDrawing();
 
         ClearBackground(BLACK);
 
+        // Draws the ship and each asteroid to the screen.
         ship.OnDraw();
-        a1.Draw();
-        a2.Draw();
-        a3.Draw();
-        a4.Draw();
-        a5.Draw();
+        for (Asteroid* as : asteroids) {
+            as->Draw();
+        }
 
         EndDrawing();
     }
 
     CloseWindow();
+
+
+    // Removes each asteroid from memory.
+    for (Asteroid* as : asteroids) {
+        delete as;
+        as = nullptr;
+    }
 
     return 0;
 }

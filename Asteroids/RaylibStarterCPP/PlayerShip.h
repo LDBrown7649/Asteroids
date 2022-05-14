@@ -25,17 +25,21 @@ private:
 	// A method for creating and storing bullets.
 	void Shoot();
 
+	Texture MovingImage = LoadTexture("Images/shipThrusting.png");
+
 	int maxBullets = 5;
 	Vector2 accel = { 0.f, 0.f };
 
 	// The speed at which the player can turn/accelerate
-	float rotSpeed = 4.5f;
+	float rotSpeed = 4.f;
 	float accelSpeed = -0.2f;
 
 	// A value representing the drag of the ship, slowing the ship down.
-	float drag = 0.97f;
+	float drag = 0.975f;
 
 	// The amount of lives that the player has remaining. The game ends when lives = 0.
 	int lives = 3;
+
+	bool thrusting = false;
 };
 

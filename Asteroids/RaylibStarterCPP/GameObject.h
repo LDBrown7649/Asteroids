@@ -19,6 +19,8 @@ public:
 	// A function for returning the object's centre point.
 	Vector2 GetPos() { return pos; }
 
+	void SetPos(Vector2 value) { pos = value; }
+
 	float GetSize() { return scale * img.width; }
 
 protected:

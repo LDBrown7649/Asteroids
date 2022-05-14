@@ -13,9 +13,9 @@ public:
 	~Asteroid();
 
 	// An asteroid constructor for creating smaller asteroids when a larger asteroid is destroyed.
-	Asteroid(int healthRemaining, int seed);
+	Asteroid(int healthRemaining);
 
-	void Draw();
+	Asteroid(Asteroid* as);
 
 	// A method for accessing the asteroid's current health.
 	int GetHealth() {

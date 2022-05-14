@@ -18,27 +18,28 @@ void GameObject::Update()
 
 	// Allows the bullet to wrap around the screen and appear on the other side if it goes off screen.
 	if (pos.x > 800 + img.height / 2 * scale) {
-		pos.x -= 800;
+		pos.x -= (800 + img.width * scale);
 	}
 	if (pos.x < -img.height / 2 * scale) {
-		pos.x += 800;
+		pos.x += (800 + img.width * scale);
 	}
 	if (pos.y > 800 + img.height / 2 * scale) {
-		pos.y -= 800;
+		pos.y -= (800 + img.width * scale);
 	}
 	if (pos.y < -img.height / 2 * scale) {
-		pos.y += 800;
+		pos.y += (800 + img.width * scale);
 	}
 }
 
 Vector2 GameObject::DrawOffset()
 {
+	float moveDist = img.width * scale / 2;
 	// Moves the position of the object to be centred along the top edge.
-	Vector2 centredVec = { pos.x - cos((rotation)*DEG2RAD) * img.width * scale / 2, pos.y + sin((rotation)*DEG2RAD) * img.height * scale / 2 };
+	Vector2 centredVec = { pos.x - cos((rotation)*DEG2RAD) * moveDist, pos.y + sin((rotation)*DEG2RAD) * moveDist };
 
 	// Moves the position of the object to be centred along the side edge.
-	centredVec.x -= sin((rotation)*DEG2RAD) * img.width * scale / 2;
-	centredVec.y -= cos((rotation)*DEG2RAD) * img.width * scale / 2;
+	centredVec.x -= sin((rotation)*DEG2RAD) * moveDist;
+	centredVec.y -= cos((rotation)*DEG2RAD) * moveDist;
 
 	return centredVec;
 }

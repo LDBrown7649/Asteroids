@@ -7,10 +7,8 @@ Asteroid::~Asteroid()
 	UnloadTexture(img);
 }
 
-Asteroid::Asteroid(int healthRemaining, int seed)
+Asteroid::Asteroid(int healthRemaining)
 {
-	// Seeds the random generation based on the seed received.
-	srand(seed);
 	// Loads the default asteroid image.
 	std::string imgAddress = "Images/Asteroid" + std::to_string(rand() % 3) + ".png";
 	img = LoadTexture(imgAddress.c_str());
@@ -30,15 +28,23 @@ Asteroid::Asteroid(int healthRemaining, int seed)
 	scale = healthRemaining * 0.8f;
 
 	health = healthRemaining;
+
+	collided = false;
 }
 
-void Asteroid::Draw()
+Asteroid::Asteroid(Asteroid* as)
 {
-	// Calculates the centre of the image.
-	Vector2 drawPos = this->DrawOffset();
-
-	// Draws the ship onto the screen.
-	DrawTextureEx(img, drawPos, -rotation, scale, collided ? RED : WHITE);
-	DrawCircle(pos.x, pos.y, 5, RED);
+	pos = as->pos;
+	float moveAngle = (float)(rand() % 360) * DEG2RAD;
+	float speed = (float)((rand() % maxSpeed * 100) / 100 + 1);
+	// Sets the rotation, scale, and health.
+	rotation = moveAngle * RAD2DEG;
+	vel = { cos(moveAngle) * speed, sin(moveAngle) * speed };
+	health = as->health - 1;
 	collided = false;
+
+	std::string imgAddress = "Images/Asteroid" + std::to_string(rand() % 3) + ".png";
+	img = LoadTexture(imgAddress.c_str());
+
+	scale = health * 0.8f;
 }

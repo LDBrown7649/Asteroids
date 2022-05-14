@@ -45,6 +45,7 @@ void CheckCollisions(PlayerShip* ship, Asteroid* asteroid) {
        float distance = sqrt(bulletToAsteroid.x * bulletToAsteroid.x + bulletToAsteroid.y * bulletToAsteroid.y);
        if (distance < asteroidSize + bullet->GetSize() / 2.f) {
            asteroid ->collided = true;
+           bullet->remove = true;
        }
    }
 
@@ -54,6 +55,7 @@ void CheckCollisions(PlayerShip* ship, Asteroid* asteroid) {
    float distance = sqrt(shipToAsteroid.x * shipToAsteroid.x + shipToAsteroid.y * shipToAsteroid.y);
    if (distance < asteroidSize + ship->GetSize() / 2.f) {
        asteroid->collided = true;
+       ship->SetPos(Vector2{ 400, 400 });
    }
 }
 
@@ -77,18 +79,39 @@ int main(int argc, char* argv[])
     // Creates the ship that the player controls.
     PlayerShip ship = PlayerShip();
 
-    // Creates instances of asteroids.
-    for (int i = 0; i < 1; i++) {
-        asteroids.push_back(new Asteroid(3, rand()));
-    }
+    
 
     // Continuously updates and draws the ship until the game should close.
     while (!WindowShouldClose())
     {
+        
+        int size = asteroids.size();
+        if (size == 0) {
+            for(int i = 0; i < 5; i++)
+            asteroids.push_back(new Asteroid(3));
+        }
         // Updates the ship and each asteroid in the scene.
-        for (Asteroid* as : asteroids) {
-            as->Update();
-            CheckCollisions(&ship, as);
+        for (int i = 0; i < size; i++) {
+            asteroids[i]->Update();
+            CheckCollisions(&ship, asteroids[i]);
+            if (asteroids[i]->collided) {
+                if (asteroids[i]->GetHealth() > 1) {
+                    asteroids.push_back(new Asteroid(asteroids[i]));
+                    Asteroid* tempAsteroid = new Asteroid(asteroids[i]);
+                    delete asteroids[i];
+                    asteroids[i] = asteroids[size - 1];
+                    asteroids[size - 1] = tempAsteroid;
+                    size++;
+                    i--;
+                }
+                else {
+                    delete asteroids[i];
+                    asteroids[i] = asteroids[size - 1];
+                    asteroids.pop_back();
+                    size--;
+                    i--;
+                }
+            }
         }
         ship.Update();
 

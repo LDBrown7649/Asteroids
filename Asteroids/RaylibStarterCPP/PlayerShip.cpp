@@ -3,7 +3,7 @@
 PlayerShip::PlayerShip()
 {
 	// Loads the associated image of the ship.
-	img = LoadTexture("Images/Ship.png");
+	img = LoadTexture("Images/ship.png");
 	pos = { 400, 400 };
 	scale = 0.2f;
 }
@@ -12,6 +12,8 @@ PlayerShip::~PlayerShip()
 {
 	// Unloads the ship texture from memory.
 	UnloadTexture(img);
+
+	UnloadTexture(MovingImage);
 
 	// Removes all of the bullets in the queue from memory.
 	for (Bullet* bullet : bulletQueue) {
@@ -24,7 +26,12 @@ PlayerShip::~PlayerShip()
 
 void PlayerShip::Draw()
 {
-	GameObject::Draw();
+	// Calculates the centre of the image.
+	Vector2 drawPos = this->DrawOffset();
+
+	// Draws the ship onto the screen.
+	DrawTextureEx(thrusting ? MovingImage : img, drawPos, -rotation, scale, WHITE);
+	DrawCircle(pos.x, pos.y, 5, RED);
 
 	// Draws each bullet to the screen (if there are bullets to draw).
 	if (!bulletQueue.empty()) {
@@ -41,6 +48,7 @@ void PlayerShip::Update()
 
 	// Resets acceleration to 0.
 	accel = { 0, 0 };
+	thrusting = false;
 
 	// Adds to or subtracts from rotation if the A or D key is pressed.
 	if (IsKeyDown(KEY_A)) {
@@ -54,6 +62,7 @@ void PlayerShip::Update()
 	if (IsKeyDown(KEY_W)) {
 		accel.y = cos(Rad) * accelSpeed;
 		accel.x = sin(Rad) * accelSpeed;
+		thrusting = true;
 	}
 
 	// Accelerates backwards if the S key is pressed
@@ -79,16 +88,22 @@ void PlayerShip::Update()
 
 	// Checks if there are bullets in the queue.
 	if (!bulletQueue.empty()) {
+		int size = bulletQueue.size();
+		for (int i = 0; i < size; i++) {
+			if (bulletQueue[i]->remove) {
 
-		// Removes every bullet in the queue that has existed for too long.
-		while (bulletQueue.front()->remove) {
-			delete bulletQueue.front();
-			bulletQueue.front() = nullptr;
-			bulletQueue.pop_front();
+				// Replaces this value with the value at the end of the queue
+				delete bulletQueue[i];
+				bulletQueue[i] = bulletQueue.back();
 
-			// Ends the loop if the bullet queue is empty.
-			if (bulletQueue.empty()) {
-				break;
+				// Removes the end value.
+				bulletQueue.pop_back();
+
+				// Notes the decrease in the size of the array.
+				size--;
+
+				// Decrements i, ensuring that the new value will be checked before moving on in the for loop.
+				i--;
 			}
 		}
 		// Updates each remaining bullet's position.

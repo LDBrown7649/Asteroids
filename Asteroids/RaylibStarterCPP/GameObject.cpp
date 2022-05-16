@@ -17,17 +17,17 @@ void GameObject::Update()
 	pos.y += vel.y;
 
 	// Allows the bullet to wrap around the screen and appear on the other side if it goes off screen.
-	if (pos.x > 800 + img.height / 2 * scale) {
-		pos.x -= (800 + img.width * scale);
+	if (pos.x > 600 + img.height / 2 * scale) {
+		pos.x -= (600 + img.width * scale);
 	}
 	if (pos.x < -img.height / 2 * scale) {
-		pos.x += (800 + img.width * scale);
+		pos.x += (600 + img.width * scale);
 	}
-	if (pos.y > 800 + img.height / 2 * scale) {
-		pos.y -= (800 + img.width * scale);
+	if (pos.y > 600 + img.height / 2 * scale) {
+		pos.y -= (600 + img.width * scale);
 	}
 	if (pos.y < -img.height / 2 * scale) {
-		pos.y += (800 + img.width * scale);
+		pos.y += (600 + img.width * scale);
 	}
 }
 

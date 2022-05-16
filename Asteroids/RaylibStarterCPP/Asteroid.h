@@ -27,7 +27,7 @@ public:
 
 private:
 	// The max speed that the asteroid can travel at.
-	int maxSpeed = 2;
+	int maxSpeed = 3;
 
 	// The asteroid's current health, representing how many times it can be broken apart before being destroyed.
 	int health = 3;

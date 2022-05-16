@@ -4,8 +4,8 @@ PlayerShip::PlayerShip()
 {
 	// Loads the associated image of the ship.
 	img = LoadTexture("Images/ship.png");
-	pos = { 400, 400 };
-	scale = 0.2f;
+	pos = { 300, 300 };
+	scale = 0.25f;
 }
 
 PlayerShip::~PlayerShip()

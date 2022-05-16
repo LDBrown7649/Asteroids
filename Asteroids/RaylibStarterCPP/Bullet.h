@@ -24,7 +24,7 @@ private:
 	float shootSpeed = 15;
 
 	// The amount of frames that the bullet has existed for, and how many frames it can exist for before being destroyed.
-	int maxLife = 300;
+	int maxLife = 45;
 	int lifeExpended = 0;
 };
 

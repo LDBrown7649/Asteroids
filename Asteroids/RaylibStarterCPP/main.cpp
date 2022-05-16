@@ -61,12 +61,18 @@ void CheckCollisions(PlayerShip* ship, Asteroid* asteroid) {
 
 int main(int argc, char* argv[])
 {
+    int numAsteroids = 1;
+
+    // Gives the player a second between destruction of final asteroid and spawning new ones.
+    int cooldownTime = 60;
+    int elapsedCooldown = 0;
+
     // Creates a vector of all asteroids.
     std::vector<Asteroid*> asteroids;
 
     // The dimensions of the screen.
-    int screenWidth = 800;
-    int screenHeight = 800;
+    int screenWidth = 600;
+    int screenHeight = 600;
 
     InitWindow(screenWidth, screenHeight, "ASTEROIDS!");
 
@@ -84,11 +90,18 @@ int main(int argc, char* argv[])
     // Continuously updates and draws the ship until the game should close.
     while (!WindowShouldClose())
     {
-        
         int size = asteroids.size();
         if (size == 0) {
-            for(int i = 0; i < 5; i++)
-            asteroids.push_back(new Asteroid(3));
+            if (elapsedCooldown >= cooldownTime) {
+                for (int i = 0; i < numAsteroids; i++) {
+                    asteroids.push_back(new Asteroid(3));
+                }
+                numAsteroids += 2;
+                elapsedCooldown = 0;
+            }
+            else {
+                elapsedCooldown++;
+            }
         }
         // Updates the ship and each asteroid in the scene.
         for (int i = 0; i < size; i++) {

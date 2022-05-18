@@ -7,7 +7,10 @@
 class GameObject
 {
 public:
+
+	// A boolean reflecting whether or not a collision has occurred between two game objects.
 	bool collided = false;
+
 	// A method for drawing the player to the screen.
 	virtual void Draw();
 

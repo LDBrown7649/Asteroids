@@ -14,7 +14,7 @@ void Bullet::Update()
 
 	// Sets the remove flag to true if the bullet has existed for longer than maxLife allows.
 	if (lifeExpended > maxLife) {
-		remove = true;
+		collided = true;
 	}
 }
 

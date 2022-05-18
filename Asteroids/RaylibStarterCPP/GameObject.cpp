@@ -7,7 +7,6 @@ void GameObject::Draw()
 
 	// Draws the ship onto the screen.
 	DrawTextureEx(img, drawPos, -rotation, scale, WHITE);
-	DrawCircle(pos.x, pos.y, 5, RED);
 }
 
 void GameObject::Update()
@@ -42,4 +41,14 @@ Vector2 GameObject::DrawOffset()
 	centredVec.y -= cos((rotation)*DEG2RAD) * moveDist;
 
 	return centredVec;
+}
+
+void GameObject::CheckCollision(GameObject* other)
+{
+	Vector2 vectBetween = { pos.x - other->pos.x, pos.y - other->pos.y };
+	float sqrDist = vectBetween.x * vectBetween.x + vectBetween.y * vectBetween.y;
+	if (sqrDist < (GetSize() + other->GetSize()) * (GetSize() + other->GetSize()) / 4) {
+		collided = true;
+		other->collided = true;
+	}
 }

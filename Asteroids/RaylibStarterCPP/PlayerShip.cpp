@@ -3,9 +3,10 @@
 PlayerShip::PlayerShip()
 {
 	// Loads the associated image of the ship.
-	img = LoadTexture("Images/ship.png");
 	pos = { 300, 300 };
 	scale = 0.25f;
+	MovingImage = LoadTexture("Images/shipThrusting.png");
+	img = LoadTexture("Images/ship.png");
 }
 
 PlayerShip::~PlayerShip()
@@ -90,7 +91,7 @@ void PlayerShip::Update()
 	if (!bulletQueue.empty()) {
 		int size = bulletQueue.size();
 		for (int i = 0; i < size; i++) {
-			if (bulletQueue[i]->remove) {
+			if (bulletQueue[i]->collided) {
 
 				// Replaces this value with the value at the end of the queue
 				delete bulletQueue[i];

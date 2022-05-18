@@ -25,7 +25,7 @@ private:
 	// A method for creating and storing bullets.
 	void Shoot();
 
-	Texture MovingImage = LoadTexture("Images/shipThrusting.png");
+	Texture MovingImage;
 
 	int maxBullets = 3;
 	Vector2 accel = { 0.f, 0.f };

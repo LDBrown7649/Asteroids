@@ -7,6 +7,7 @@
 class GameObject
 {
 public:
+	bool collided = false;
 	// A method for drawing the player to the screen.
 	virtual void Draw();
 
@@ -22,6 +23,8 @@ public:
 	void SetPos(Vector2 value) { pos = value; }
 
 	float GetSize() { return scale * img.width; }
+
+	void CheckCollision(GameObject* other);
 
 protected:
 	// The image representing the bullet.

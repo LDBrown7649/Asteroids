@@ -22,8 +22,7 @@ public:
 		return health;
 	}
 
-	// A boolean for tracking if a collision has occurred.
-	bool collided = false;
+	int GetPointValue() { return pointValue; }
 
 private:
 	// The max speed that the asteroid can travel at.
@@ -31,5 +30,7 @@ private:
 
 	// The asteroid's current health, representing how many times it can be broken apart before being destroyed.
 	int health = 3;
+
+	int pointValue = 500;
 };
 

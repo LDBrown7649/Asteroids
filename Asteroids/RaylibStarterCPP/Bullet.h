@@ -9,9 +9,6 @@ public:
 
 	// A constructor for generating new bullets at the player's location.
 	Bullet(Vector2* shipPos, float shipRot);
-	
-	// A flag for verifying if this object should be destroyed.
-	bool remove = false;
 
 	// Used for moving the bullets.
 	void Update();

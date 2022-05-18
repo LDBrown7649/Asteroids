@@ -75,6 +75,12 @@ void GameController::Shutdown()
         delete asteroid;
         asteroid = nullptr;
     }
+
+    std::ofstream file;
+    file.open("highscores.dat", std::ios::out);
+    file << "Lachlan" << std::endl;
+    file << currentScore << std::endl;
+    file.close();
 }
 
 /// <summary>
@@ -107,6 +113,8 @@ void GameController::CheckAsteroids()
         // Check how many asteroids were previously collided with and should therefore "break".
         for (int i = 0; i < size; i++) {
             if (asteroids[i]->collided) {
+                // Increases the player's current point score by the asteroid's point value.
+                currentScore += asteroids[i]->GetPoints();
                 BreakAsteroid(i, &size);
             }
         }

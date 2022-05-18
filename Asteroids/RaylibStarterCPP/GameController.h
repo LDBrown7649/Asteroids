@@ -28,6 +28,8 @@ private:
 	int screenWidth = 600;
 	int screenHeight = 600;
 
+	int highscore = 0;
+
 	// A vector of pointers to asteroids.
 	std::vector<Asteroid*> asteroids;
 

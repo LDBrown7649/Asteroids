@@ -30,6 +30,10 @@ private:
 
 	int highscore = 0;
 
+	std::string playerName = "Johnathan";
+
+	char* highscoreName = new char[20];
+
 	// A vector of pointers to asteroids.
 	std::vector<Asteroid*> asteroids;
 

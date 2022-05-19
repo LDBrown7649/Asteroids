@@ -1,5 +1,5 @@
 #include "GameController.h"
-
+#include <iostream>
 void GameController::PlayGame()
 {
     // Setup the required game features.
@@ -28,6 +28,11 @@ void GameController::Setup()
 
     // Creates the ship that the player controls.
     ship = new PlayerShip();
+
+    std::ifstream file("highscores.dat", std::ios::in);
+    file >> highscoreName;
+    file >> highscore;
+    file.close();
 }
 
 void GameController::Update()
@@ -53,6 +58,8 @@ void GameController::Draw()
     // Draws the player's current score to the screen and sets the background to be Black.
     ClearBackground(BLACK);
     DrawText(std::to_string(currentScore).c_str(), 20, 20, 20, WHITE);
+    DrawText("HIGHSCORE:", 370, 20, 20, WHITE);
+    DrawText(std::to_string(highscore).c_str(), 500, 20, 20, WHITE);
 
     // Draws each asteroid, the ship, and the bullets (as part of the ship drawing process).
     for (Asteroid* asteroid : asteroids) {
@@ -76,10 +83,28 @@ void GameController::Shutdown()
         asteroid = nullptr;
     }
 
-    std::ofstream file;
+    int scores[5] = { 0,0,0,0,0 };
+    std::string names[5];
+
+    std::fstream file("highscores.dat", std::ios::in);
+    for (int i = 0; i < 5; i++) {
+        file >> names[i];
+        file >> scores[i];
+    }
+    file.close();
+
     file.open("highscores.dat", std::ios::out);
-    file << "Lachlan" << std::endl;
-    file << currentScore << std::endl;
+    for (int i = 0; i < 5; i++) {
+        if (currentScore > scores[i]) {
+            std::string tempName = names[i];
+            int tempScore = scores[i];
+            names[i] = playerName;
+            scores[i] = currentScore;
+            playerName = tempName;
+            currentScore = tempScore;
+        }
+        file << names[i] << " " << std::to_string(scores[i]) << std::endl;
+    }
     file.close();
 }
 

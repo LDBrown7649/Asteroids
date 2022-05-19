@@ -76,12 +76,6 @@ void PlayerShip::Update()
 		accel.x = sin(Rad) * accelSpeed;
 		accelerating = true;
 	}
-
-	// Accelerates backwards if the S key is pressed
-	else if (IsKeyDown(KEY_S)) {
-		accel.y = -cos(Rad) * accelSpeed;
-		accel.x = -sin(Rad) * accelSpeed;
-	}
 	
 	// Applies acceleration to velocity.
 	vel.y += accel.y;

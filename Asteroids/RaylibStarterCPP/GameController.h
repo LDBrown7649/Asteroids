@@ -6,7 +6,7 @@
 #include "UFO.h"
 #include <fstream>
 
-enum GameMode {
+enum class GameMode {
 	Menu,
 	Game,
 	Score,
@@ -17,7 +17,7 @@ class GameController
 {
 private:
 
-	GameMode gamestate = Menu;
+	GameMode gamestate = GameMode::Menu;
 	// The player's current score.
 	int currentScore = 0;
 
@@ -61,6 +61,8 @@ private:
 
 	void LoadMenu();
 
+	void UpdateScores();
+
 	void Scoreboard();
 
 	// Frees any allocated memory that needs to be freed, and closes the game window.
@@ -82,6 +84,9 @@ private:
 	int scores[5] = {0,0,0,0,0};
 
 	std::string names[5] = {"","","","",""};
+
+	void ClearAsteroids();
+	void ResetGame();
 
 public:
 	// Holds all game functionality.

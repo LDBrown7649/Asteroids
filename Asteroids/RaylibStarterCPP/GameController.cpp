@@ -1,33 +1,103 @@
 #include "GameController.h"
 #include <iostream>
+#include "Button.h"
+
+
+/// <summary>
+/// Loads, updates, and draws the main menu
+/// </summary>
 void GameController::LoadMenu()
 {
-    Vector2 mousePos = GetMousePosition();
-    if (IsMouseButtonPressed(0) && mousePos.x > 300 && mousePos.y > 300) {
-        gamestate = Game;
+    // Adds new background asteroids until 5 are in the scene.
+    while (asteroids.size() < 5) {
+        asteroids.push_back(new Asteroid());
     }
 
+    // Creates a button for the player to press to begin the game.
+    Button playButton = Button(Vector2{ 150, 250 }, 250, 80, DARKBROWN, "PLAY ASTEROIDS!");
+
+    // Creates a button for the player to press to quit.
+    Button quitButton = Button(Vector2{ 150, 350 }, 250, 80, DARKBROWN, "QUIT GAME");
+
+    Vector2 mousePos = GetMousePosition();
+
+    // Checks if the play button was pressed.
+    if (IsMouseButtonPressed(0) && playButton.CheckButtonOverlap(mousePos)) {
+        // Changes the game state from "Menu" to "Game"
+        ResetGame();
+        gamestate = GameMode::Game;
+    }
+
+    // Checks if the quit button was pressed
+    if (IsMouseButtonPressed(0) && quitButton.CheckButtonOverlap(mousePos)) {
+        // Changes the game state from "Menu" to "Quit"
+        gamestate = GameMode::Quit;
+    }
+
+    // Draws the background asteroids, as well as the buttons.
     BeginDrawing();
-    ClearBackground(BLUE);
-    DrawText("Asteroids!", 200, 100, 30, WHITE);
-    DrawRectangle(300, 300, 300, 300, RED);
+    ClearBackground(BLACK);
+    for (Asteroid* asteroid : asteroids) {
+        asteroid->Update();
+        asteroid->Draw();
+    }
+    DrawText("Asteroids!", 50, 80, 100, RAYWHITE);
+    playButton.DrawButton();
+    quitButton.DrawButton();
     EndDrawing();
 }
 
+/// <summary>
+/// Displays the scoreboard at the end of the game. This displays previous highscores.
+/// </summary>
 void GameController::Scoreboard() {
+    // Creates a button for the player to press to restart the game.
+    Button playButton = Button(Vector2{ 50, 500 }, 175, 75, DARKBROWN, "PLAY AGAIN");
+    // Creates a button for the player to press to quit.
+    Button quitButton = Button(Vector2{ 350, 500 }, 175, 75, DARKBROWN, "QUIT GAME");
+
+    // Adds new background asteroids (if required)
+    while (asteroids.size() < 5) {
+        asteroids.push_back(new Asteroid());
+    }
+
+    // Checks if the scores need to be read from the file.
     if (scores[0] == 0) {
         GetScores();
+        UpdateScores();
     }
+
+    Vector2 mousePos = GetMousePosition();
+
+    // Checks if the quit button was pressed.
+    if (quitButton.CheckButtonOverlap(mousePos) && IsMouseButtonDown(0)) {
+        // Moves the game state from "Score" to "Quit"
+        gamestate = GameMode::Quit;
+    }
+    // Checks if the play button was pressed.
+    if (playButton.CheckButtonOverlap(mousePos) && IsMouseButtonDown(0)) {
+        ResetGame();
+        // Moves the game state from "Score" to "Game"
+        gamestate = GameMode::Game;
+    }
+
+    // Draws the highscore values and buttons, along with the background asteroids.
     BeginDrawing();
-    ClearBackground(BLUE);
-    DrawText("HIGH SCORES!", 200, 100, 30, WHITE);
+    ClearBackground(BLACK);
+    DrawText("HIGH SCORES!", 120, 100, 50, WHITE);
+    
+    for (Asteroid* asteroid : asteroids) {
+        asteroid->Update();
+        asteroid->Draw();
+    }
+    playButton.DrawButton();
+    quitButton.DrawButton();
     for (int i = 0; i < 5; i++) {
         DrawText(std::to_string(scores[i]).c_str(), 200, 200 + 50 * i, 25, WHITE);
         DrawText(names[i].c_str(), 300, 200 + 50 * i, 25, WHITE);
     }
+    
     EndDrawing();
-
-    if (IsMouseButtonDown(0)) gamestate = Quit;
 }
 
 void GameController::GetScores() {
@@ -45,20 +115,24 @@ void GameController::PlayGame()
     // Setup the required game features.
     Setup();
 
-    // Continuously update and draw the game objects until the player closes the window or presses escape.
+    // Continuously runs the game loop, calling functions based on the game's current state.
     while (!(endgame || WindowShouldClose())) {
         switch (gamestate) {
-            case Menu:
+            case GameMode::Menu:
+                // Loads the main menu objects.
                 LoadMenu();
                 break;
-            case Game:
+            case GameMode::Game:
+                // The main gameplay section where the player avoids asteroids.
                 GameUpdate();
                 GameDraw();
                 break;
-            case Score:
+            case GameMode::Score:
+                // The scoreboard showing past highscores.
                 Scoreboard();
                 break;
-            case Quit:
+            case GameMode::Quit:
+                // Ends the while loop, exiting the game.
                 endgame = true;
         }
         
@@ -66,6 +140,39 @@ void GameController::PlayGame()
 
     // End the play loop and free any used memory.
     Shutdown();
+}
+
+/// <summary>
+/// Remove all asteroids from the scene and delete them from memory.
+/// </summary>
+void GameController::ClearAsteroids()
+{
+    for (Asteroid* asteroid : asteroids) {
+        delete asteroid;
+        asteroid = nullptr;
+    }
+    asteroids.clear();
+}
+
+/// <summary>
+/// Resets important game features so that the game can be played again.
+/// </summary>
+void GameController::ResetGame()
+{
+    // Resets the player's name
+    playerName = "Lachlan";
+
+    // Resets the score items
+    scores[0] = 0;
+    currentScore = 0;
+
+    // Resets the asteroids
+    ClearAsteroids();
+    numAsteroids = 1;
+
+    // Resets the player ship object.
+    delete ship;
+    ship = new PlayerShip();
 }
 
 void GameController::Setup()
@@ -96,16 +203,11 @@ void GameController::GameUpdate()
     // Checks which asteroids need to split or be removed.
     CheckAsteroids();
 
-    // Updates each asteroid in the scene
-    for (Asteroid* asteroid : asteroids) {
-        asteroid->Update();
-    }
-
     // Updates the ship (and the attached bullet objects)
     ship->Update();
 
     if (ship->GetLives() <= 0){
-        gamestate = Score;
+        gamestate = GameMode::Score;
     }
 }
 
@@ -139,13 +241,16 @@ void GameController::Shutdown()
     // Deletes the ship and asteroids, and sets each pointer to the null pointer.
     delete ship;
     ship = nullptr;
-    for(Asteroid * asteroid : asteroids) {
-        delete asteroid;
-        asteroid = nullptr;
+    ClearAsteroids();
+
+    if (scores[0] == 0) {
+        GetScores();
     }
 
-    GetScores();
+    UpdateScores();
+}
 
+void GameController::UpdateScores() {
     // Updates the highscores, adding in the current score at the required location
     // and updating the list as required.
     std::fstream file("highscores.dat", std::ios::out);
@@ -199,6 +304,11 @@ void GameController::CheckAsteroids()
                 BreakAsteroid(i, &size);
             }
         }
+    }
+
+    // Updates each asteroid in the scene
+    for (Asteroid* asteroid : asteroids) {
+        asteroid->Update();
     }
 }
 

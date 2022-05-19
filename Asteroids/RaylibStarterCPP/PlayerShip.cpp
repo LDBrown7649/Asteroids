@@ -3,7 +3,7 @@
 PlayerShip::PlayerShip()
 {
 	// Loads the associated image of the ship.
-	pos = { 300, 300 };
+	ResetPosition();
 	scale = 0.25f;
 	MovingImage = LoadTexture("Images/shipThrusting.png");
 	img = LoadTexture("Images/ship.png");
@@ -30,8 +30,12 @@ void PlayerShip::Draw()
 	// Calculates the centre of the image.
 	Vector2 drawPos = this->DrawOffset();
 
+	for (int i = 0; i < lives; i++) {
+		DrawTextureEx(img, { (30.f * i), 30 }, 0, scale / 2, WHITE);
+	}
+
 	// Draws the ship onto the screen.
-	DrawTextureEx(thrusting ? MovingImage : img, drawPos, -rotation, scale, WHITE);
+	DrawTextureEx(accelerating ? MovingImage : img, drawPos, -rotation, scale, WHITE);
 	DrawCircle(pos.x, pos.y, 5, RED);
 
 	// Draws each bullet to the screen (if there are bullets to draw).
@@ -42,6 +46,13 @@ void PlayerShip::Draw()
 	}
 }
 
+void PlayerShip::ResetPosition()
+{
+	vel = { 0,0 };
+	pos = { 300, 300 };
+	rotation = 0;
+}
+
 void PlayerShip::Update()
 {
 	// Converts the rotation from degrees to radians.
@@ -49,7 +60,7 @@ void PlayerShip::Update()
 
 	// Resets acceleration to 0.
 	accel = { 0, 0 };
-	thrusting = false;
+	accelerating = false;
 
 	// Adds to or subtracts from rotation if the A or D key is pressed.
 	if (IsKeyDown(KEY_A)) {
@@ -63,7 +74,7 @@ void PlayerShip::Update()
 	if (IsKeyDown(KEY_W)) {
 		accel.y = cos(Rad) * accelSpeed;
 		accel.x = sin(Rad) * accelSpeed;
-		thrusting = true;
+		accelerating = true;
 	}
 
 	// Accelerates backwards if the S key is pressed
@@ -112,6 +123,12 @@ void PlayerShip::Update()
 			bullet->Update();
 		}
 		
+	}
+
+	if (collided) {
+		collided = false;
+		ResetPosition();
+		lives--;
 	}
 }
 

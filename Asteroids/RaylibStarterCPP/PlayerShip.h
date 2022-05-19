@@ -18,6 +18,12 @@ public:
 	// A method for returning the queue of bullets.
 	std::deque<Bullet*>* GetBullets() { return &bulletQueue; }
 
+	// Resets the player's position to the centre of the screen.
+	void ResetPosition();
+
+	// Returns the number of lives that the player currently has remaining.
+	int GetLives() { return lives; }
+
 private:
 	// A double-ended queue, allowing for access to all bullets currently on the screen.
 	std::deque<Bullet*> bulletQueue;
@@ -25,9 +31,13 @@ private:
 	// A method for creating and storing bullets.
 	void Shoot();
 
+	// The image to show if the player is accelerating
 	Texture MovingImage;
 
+	// The maximum amount of bullets allowed on the screen at a time.
 	int maxBullets = 3;
+
+	// The player's acceleration vector.
 	Vector2 accel = { 0.f, 0.f };
 
 	// The speed at which the player can turn/accelerate
@@ -40,6 +50,6 @@ private:
 	// The amount of lives that the player has remaining. The game ends when lives = 0.
 	int lives = 3;
 
-	bool thrusting = false;
+	bool accelerating = false;
 };
 

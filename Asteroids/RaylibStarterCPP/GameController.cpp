@@ -1,14 +1,67 @@
 #include "GameController.h"
 #include <iostream>
+void GameController::LoadMenu()
+{
+    Vector2 mousePos = GetMousePosition();
+    if (IsMouseButtonPressed(0) && mousePos.x > 300 && mousePos.y > 300) {
+        gamestate = Game;
+    }
+
+    BeginDrawing();
+    ClearBackground(BLUE);
+    DrawText("Asteroids!", 200, 100, 30, WHITE);
+    DrawRectangle(300, 300, 300, 300, RED);
+    EndDrawing();
+}
+
+void GameController::Scoreboard() {
+    if (scores[0] == 0) {
+        GetScores();
+    }
+    BeginDrawing();
+    ClearBackground(BLUE);
+    DrawText("HIGH SCORES!", 200, 100, 30, WHITE);
+    for (int i = 0; i < 5; i++) {
+        DrawText(std::to_string(scores[i]).c_str(), 200, 200 + 50 * i, 25, WHITE);
+        DrawText(names[i].c_str(), 300, 200 + 50 * i, 25, WHITE);
+    }
+    EndDrawing();
+
+    if (IsMouseButtonDown(0)) gamestate = Quit;
+}
+
+void GameController::GetScores() {
+    // Retrieves the scores and names from the highscores file.
+    std::fstream file("highscores.dat", std::ios::in);
+    for (int i = 0; i < 5; i++) {
+        file >> names[i];
+        file >> scores[i];
+    }
+    file.close();
+}
+
 void GameController::PlayGame()
 {
     // Setup the required game features.
     Setup();
 
     // Continuously update and draw the game objects until the player closes the window or presses escape.
-    while (!WindowShouldClose()) {
-        Update();
-        Draw();
+    while (!(endgame || WindowShouldClose())) {
+        switch (gamestate) {
+            case Menu:
+                LoadMenu();
+                break;
+            case Game:
+                GameUpdate();
+                GameDraw();
+                break;
+            case Score:
+                Scoreboard();
+                break;
+            case Quit:
+                endgame = true;
+        }
+        
     }
 
     // End the play loop and free any used memory.
@@ -29,13 +82,14 @@ void GameController::Setup()
     // Creates the ship that the player controls.
     ship = new PlayerShip();
 
+    // Opens the highscores file, reads the first record (current highest score), and closes the file. 
     std::ifstream file("highscores.dat", std::ios::in);
     file >> highscoreName;
     file >> highscore;
     file.close();
 }
 
-void GameController::Update()
+void GameController::GameUpdate()
 {
     // Checks which objects have collided with each other.
     CheckCollisions();
@@ -49,17 +103,24 @@ void GameController::Update()
 
     // Updates the ship (and the attached bullet objects)
     ship->Update();
+
+    if (ship->GetLives() <= 0){
+        gamestate = Score;
+    }
 }
 
-void GameController::Draw()
+void GameController::GameDraw()
 {
     BeginDrawing();
 
     // Draws the player's current score to the screen and sets the background to be Black.
     ClearBackground(BLACK);
-    DrawText(std::to_string(currentScore).c_str(), 20, 20, 20, WHITE);
-    DrawText("HIGHSCORE:", 370, 20, 20, WHITE);
-    DrawText(std::to_string(highscore).c_str(), 500, 20, 20, WHITE);
+    DrawText(std::to_string(currentScore).c_str(), 20, 5, 18, WHITE);
+
+    // Displays the highest score recorded so far (and who did it).
+    DrawText("HIGHSCORE:", 370, 5, 18, WHITE);
+    DrawText(highscoreName.c_str(), 370, 25, 18, WHITE);
+    DrawText(std::to_string(highscore).c_str(), 500, 5, 18, WHITE);
 
     // Draws each asteroid, the ship, and the bullets (as part of the ship drawing process).
     for (Asteroid* asteroid : asteroids) {
@@ -83,17 +144,11 @@ void GameController::Shutdown()
         asteroid = nullptr;
     }
 
-    int scores[5] = { 0,0,0,0,0 };
-    std::string names[5];
+    GetScores();
 
-    std::fstream file("highscores.dat", std::ios::in);
-    for (int i = 0; i < 5; i++) {
-        file >> names[i];
-        file >> scores[i];
-    }
-    file.close();
-
-    file.open("highscores.dat", std::ios::out);
+    // Updates the highscores, adding in the current score at the required location
+    // and updating the list as required.
+    std::fstream file("highscores.dat", std::ios::out);
     for (int i = 0; i < 5; i++) {
         if (currentScore > scores[i]) {
             std::string tempName = names[i];
@@ -103,6 +158,7 @@ void GameController::Shutdown()
             playerName = tempName;
             currentScore = tempScore;
         }
+        // Prints the high score to the file.
         file << names[i] << " " << std::to_string(scores[i]) << std::endl;
     }
     file.close();

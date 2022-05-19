@@ -6,9 +6,18 @@
 #include "UFO.h"
 #include <fstream>
 
+enum GameMode {
+	Menu,
+	Game,
+	Score,
+	Quit
+};
+
 class GameController
 {
 private:
+
+	GameMode gamestate = Menu;
 	// The player's current score.
 	int currentScore = 0;
 
@@ -30,9 +39,9 @@ private:
 
 	int highscore = 0;
 
-	std::string playerName = "Johnathan";
+	std::string playerName = "Lachlan";
 
-	char* highscoreName = new char[20];
+	std::string highscoreName = "";
 
 	// A vector of pointers to asteroids.
 	std::vector<Asteroid*> asteroids;
@@ -45,10 +54,14 @@ private:
 	void Setup();
 
 	// Checks for collisions or changes in the scene before moving each game object to its new location.
-	void Update();
+	void GameUpdate();
 
 	// Draws each game object to the screen
-	void Draw();
+	void GameDraw();
+
+	void LoadMenu();
+
+	void Scoreboard();
 
 	// Frees any allocated memory that needs to be freed, and closes the game window.
 	void Shutdown();
@@ -61,6 +74,14 @@ private:
 
 	// Splits or removes asteroids from the scene when they are damaged.
 	void BreakAsteroid(int asteroidIndex, int* numAsteroids);
+
+	void GetScores();
+
+	bool endgame = false;
+
+	int scores[5] = {0,0,0,0,0};
+
+	std::string names[5] = {"","","","",""};
 
 public:
 	// Holds all game functionality.

@@ -10,8 +10,10 @@ public:
 	PlayerShip();
 	~PlayerShip();
 
+	// A method of updating the ship's position and rotation based on player input.
 	void Update();
 
+	// A method for drawing the ship to the screen.
 	void Draw();
 
 	// A method for returning the queue of bullets.
@@ -20,11 +22,11 @@ public:
 	// Resets the player's position to the centre of the screen.
 	void ResetPosition();
 
-	// Returns the number of lives that the player currently has remaining.
+	// Returns the number of lives that the player currently has.
 	int GetLives() { return lives; }
 
 private:
-	// A double-ended queue, allowing for access to all bullets currently on the screen.
+	// A double-ended queue consisting of pointers to bullets.
 	std::deque<Bullet*> bulletQueue;
 
 	// A method for creating and storing bullets.
@@ -43,12 +45,13 @@ private:
 	float rotSpeed = 4.f;
 	float accelSpeed = -0.2f;
 
-	// A value representing the drag of the ship, slowing the ship down.
+	// A value representing the drag of the ship.
 	float drag = 0.98f;
 
 	// The amount of lives that the player has remaining. The game ends when lives = 0.
 	int lives = 3;
 
+	// A boolean for tracking when the player is accelerating.
 	bool accelerating = false;
 };
 

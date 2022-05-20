@@ -11,20 +11,19 @@ private:
 	int width = 0;
 	int height = 0;
 
-	// An optional message to be written on the button.
-	std::string message = "";
+	// An optional label to be written on the button.
+	std::string label = "";
 
-	// The colour that the button's border will be drawn in.
+	// The colour of the button.
 	Color buttonColor;
 
 public:
 	// A button constructor for generating new buttons.
 	Button(Vector2 pos, int width, int height, Color color, std::string message);
 
-	// Check if a point and the button are overlapping currently.
+	// Check if a point and the button are overlapping.
 	bool CheckButtonOverlap(Vector2* point);
 
-	// Makes the button visible on the player's screen.
+	// Make the button visible on the player's screen.
 	void DrawButton();
 };
-

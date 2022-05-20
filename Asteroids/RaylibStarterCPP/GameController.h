@@ -6,6 +6,7 @@
 #include "PlayerShip.h"
 #include "Button.h"
 
+// An enum for classifying different states the game can be in.
 enum class GameMode {
 	Menu,
 	Game,
@@ -15,11 +16,20 @@ enum class GameMode {
 
 class GameController
 {
-private:
+private: // Variables
 
+	// The current game state. Changing this value will cause different scene objects to load.
 	GameMode gamestate = GameMode::Menu;
-	// The player's current score.
-	int currentScore = 0;
+
+	// The dimensions of the game window.
+	int screenWidth = 600;
+	int screenHeight = 600;
+
+	// The ship the player controls in the game.
+	PlayerShip* ship = nullptr;
+
+	// A vector of pointers to asteroid objects.
+	std::vector<Asteroid*> asteroids;
 
 	// The number of asteroids that should be spawned into the scene.
 	int numAsteroids = 1;
@@ -33,64 +43,83 @@ private:
 	// The maximum number of elapsed frames before more asteroids should be added.
 	int maxTimeSinceAsteroids = 60;
 
-	// The dimensions of the game window.
-	int screenWidth = 600;
-	int screenHeight = 600;
+	// The player's current score.
+	int currentScore = 0;
 
+	// The highest score currently recorded in the data file.
 	int highscore = 0;
 
-	std::string playerName = "Lachlan";
-
+	// The name associated with the highest recorded score.
 	std::string highscoreName = "";
 
-	// A vector of pointers to asteroids.
-	std::vector<Asteroid*> asteroids;
+	// The scores stored in the highscores data file.
+	int scores[5] = { 0,0,0,0,0 };
 
-	// The player's ship that they control in the game.
-	PlayerShip* ship = nullptr;
+	// The names stored in the highscores data file.
+	std::string names[5] = { "","","","","" };
 
-	// Performs the necessary operations to set up for the game to begin 
-	//(such as opening the game window, seeding the random generator, and setting the target fps).
+	// The name of the current player.
+	std::string playerName = "UNKNOWN_PLAYER";
+
+	// A boolean indicating if the game should end or not.
+	bool endgame = false;
+
+	std::vector<Button*> buttons;
+
+public: // Functions
+
+	// Controls the game process, loading and updating objects based on the current state of the game.
+	void PlayGame();
+
+private: // Functions
+
+	// Prepares the game to be played by opening the game window and seeding the random generator.
 	void Setup();
+
+	// Updates the scoreboard, closes the window, and deletes any remaining assets.
+	void Shutdown();
+
+	// Loads, updates, and draws objects and buttons on the main menu.
+	void LoadMenu();
 
 	// Checks for collisions or changes in the scene before moving each game object to its new location.
 	void GameUpdate();
 
-	// Draws each game object to the screen
-	void GameDraw();
-
-	void LoadMenu();
-
-	void UpdateScores();
-
-	void Scoreboard();
-
-	// Frees any allocated memory that needs to be freed, and closes the game window.
-	void Shutdown();
-
 	// Checks for collisions between game objects (such as asteroids, bullets, and ships).
 	void CheckCollisions();
 
-	// Checks that the scene has the correct amount of asteroids, adding more or breaking existing ones as required.
-	void CheckAsteroids();
+	// Draws each game object to the screen
+	void GameDraw();
 
-	// Splits or removes asteroids from the scene when they are damaged.
-	void BreakAsteroid(int asteroidIndex, int* numAsteroids);
+	// Resets important game features so that the game can be played again.
+	void ResetGame();
 
+	// Gets the player's name at the end of the game.
+	void GetName();
+
+	// Displays the scoreboard at the end of the game. This displays previous highscores.
+	void Scoreboard();
+
+	// Opens the highscores file and reads the contents.
 	void GetScores();
 
-	bool endgame = false;
+	// Updates the highscore file based on the player's most recent score.
+	void UpdateScores();
 
-	int scores[5] = {0,0,0,0,0};
-
-	std::string names[5] = {"","","","",""};
-
-	void ClearAsteroids();
-	void ResetGame();
+	// Sets the highscore list to a default state (names are all "..........", scores are 1000, 900, 800, 700, 600).
 	void ResetScores();
 
-public:
-	// Holds all game functionality.
-	void PlayGame();
+	// Checks that the scene has the correct amount of asteroids, adding more or breaking existing ones as required.
+	void UpdateAsteroids();
+
+	// Remove all asteroids from the scene and delete them.
+	void ClearAsteroids();
+
+	// A method for continuing to update and draw asteroids while in the background of the menu screens.
+	void DrawMenuAsteroids();
+
+	// Removes the asteroid at the specified index from the scene. If it had sufficient health, replace it with two
+	// smaller "children" asteroids. Increases or decreases the number of existing asteroids to reflect the result.
+	void BreakAsteroid(int asteroidIndex, int* numAsteroids);
 };
 

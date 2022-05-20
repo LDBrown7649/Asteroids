@@ -4,6 +4,13 @@
 #include <string>
 #include "GameObject.h"
 
+// An enum associating integer values with edges of the screen.
+enum class en_Edges {
+	Top = 0,
+	Bottom = 1,
+	Left = 2,
+	Right = 3
+};
 
 class Asteroid : public GameObject
 {
@@ -11,16 +18,14 @@ public:
 	// An asteroid Constructor and Destructor
 	~Asteroid();
 
-	// An asteroid constructor for creating smaller asteroids when a larger asteroid is destroyed.
+	// An asteroid constructor for creating new asteroids.
 	Asteroid();
 
-	// A constructor for making smaller asteroids based on larger asteroids.
+	// A constructor for making smaller asteroids based on larger asteroids (after collisions).
 	Asteroid(Asteroid* as);
 
 	// A method for accessing the asteroid's current health.
-	int GetHealth() {
-		return health;
-	}
+	int GetHealth() { return health; }
 
 	// Returns a score associated with this asteroid, calculated so that smaller asteroids award more points.
 	int GetPoints() { return basePoints * (4 - health); }

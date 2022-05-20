@@ -2,26 +2,25 @@
 
 PlayerShip::PlayerShip()
 {
-	// Loads the associated image of the ship.
+	// Resets the ship's position to the centre of the screen.
 	ResetPosition();
 	scale = 0.25f;
+	// Loads both images associated with the ship (when accelerating and when not accelerating).
 	MovingImage = LoadTexture("Images/shipThrusting.png");
 	img = LoadTexture("Images/ship.png");
 }
 
 PlayerShip::~PlayerShip()
 {
-	// Unloads the ship texture from memory.
+	// Unloads the ship textures from memory.
 	UnloadTexture(img);
-
 	UnloadTexture(MovingImage);
 
-	// Removes all of the bullets in the queue from memory.
+	// Deletes all bullets in the queue and clears it.
 	for (Bullet* bullet : bulletQueue) {
 		delete bullet;
 		bullet = nullptr;
 	}
-	// Clears the queue.
 	bulletQueue.clear();
 }
 
@@ -34,9 +33,8 @@ void PlayerShip::Draw()
 		DrawTextureEx(img, { (30.f * i), 30 }, 0, scale / 2, WHITE);
 	}
 
-	// Draws the ship onto the screen.
+	// Draws the ship's texture to the screen, choosing which one to draw based on if the ship is accelerating or not.
 	DrawTextureEx(accelerating ? MovingImage : img, drawPos, -rotation, scale, WHITE);
-	DrawCircle(pos.x, pos.y, 5, RED);
 
 	// Draws each bullet to the screen (if there are bullets to draw).
 	if (!bulletQueue.empty()) {
@@ -48,6 +46,7 @@ void PlayerShip::Draw()
 
 void PlayerShip::ResetPosition()
 {
+	// Sets the ship's velocity, position, and rotation to default values.
 	vel = { 0,0 };
 	pos = { 300, 300 };
 	rotation = 0;
@@ -72,8 +71,8 @@ void PlayerShip::Update()
 
 	// Accelerates forwards if the W key is pressed.
 	if (IsKeyDown(KEY_W)) {
-		accel.y = cos(Rad) * accelSpeed;
-		accel.x = sin(Rad) * accelSpeed;
+		accel.y = (float)cos(Rad) * accelSpeed;
+		accel.x = (float)sin(Rad) * accelSpeed;
 		accelerating = true;
 	}
 	
@@ -85,6 +84,7 @@ void PlayerShip::Update()
 	vel.x *= drag;
 	vel.y *= drag;
 
+	// Applies velocity to position
 	GameObject::Update();
 
 	// Fires a bullet from the front of the player's ship.
@@ -105,7 +105,7 @@ void PlayerShip::Update()
 				// Removes the end value.
 				bulletQueue.pop_back();
 
-				// Notes the decrease in the size of the array.
+				// Decreases the size value to reflect the queue losing a value.
 				size--;
 
 				// Decrements i, ensuring that the new value will be checked before moving on in the for loop.
@@ -119,6 +119,7 @@ void PlayerShip::Update()
 		
 	}
 
+	// If the ship has collided with an asteroid, reset its position to 0 and lose one health.
 	if (collided) {
 		collided = false;
 		ResetPosition();
@@ -129,7 +130,7 @@ void PlayerShip::Update()
 void PlayerShip::Shoot()
 {
 	// Removes the first bullet in the queue if the queue is full
-	if (bulletQueue.size() >= maxBullets) {
+	if ((int)bulletQueue.size() >= maxBullets) {
 		delete bulletQueue.front();
 		bulletQueue.front() = nullptr;
 		bulletQueue.pop_front();

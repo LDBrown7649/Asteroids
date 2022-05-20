@@ -8,11 +8,13 @@ Bullet::~Bullet()
 
 void Bullet::Update()
 {
+	// Update the bullet's position based on its current velocity
 	GameObject::Update();
-	// Increases the lifeExpended variable, indicating another frame passing.
+
+	// Increase the lifeExpended variable, indicating another frame passing.
 	lifeExpended++;
 
-	// Sets the remove flag to true if the bullet has existed for longer than maxLife allows.
+	// Set the collided flag to true if the bullet has existed for longer than maxLife allows, informing the program to remove the bullet.
 	if (lifeExpended > maxLife) {
 		collided = true;
 	}
@@ -20,24 +22,24 @@ void Bullet::Update()
 
 Bullet::Bullet(Vector2* shipPos, float shipRot)
 {
-	// Sets the rotation of this bullet to be relative to the ship's rotation.
+	// Set the rotation of this bullet to be relative to the ship's rotation.
 	rotation = shipRot + 90;
 
-	// Converts the ship's rotation from degrees to radians.
+	// Convert the ship's rotation from degrees to radians.
 	float rotRad = shipRot * DEG2RAD;
 
-	// Calculates the forward vector for this bullet based on the ship's rotation.
+	// Calculate the forward vector for this bullet based on the ship's rotation.
 	vel = { -(float)sin(rotRad), -(float)cos(rotRad) };
 
-	// Sets the position of this bullet to be the ship's front "nose-cone".
+	// Set the position of this bullet to be the ship's front "nose-cone".
 	pos = *shipPos;
-	pos.x -= sin(rotRad) * 20.f;
-	pos.y -= cos(rotRad) * 20.f;
+	pos.x -= sin(rotRad) * 20;
+	pos.y -= cos(rotRad) * 20;
 
-	// Loads the image related to this bullet.
+	// Load the image related to this bullet.
 	img = LoadTexture("Images/Bullet.png");
 
-	// Sets the correct velocity of the bullet.
+	// Set the correct velocity of the bullet.
 	vel.x *= shootSpeed;
 	vel.y *= shootSpeed;
 }

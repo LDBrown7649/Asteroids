@@ -29,8 +29,8 @@ int main(int argc, char* argv[])
 
 /*
 TO DO:
-    - Allow user to input their own name.
-    - Make player destruction more apparent
+    - Make player destruction more apparent (Sound?)
     - Implement UFO class
     - Add image transparency
+    - Add sound effects
 */

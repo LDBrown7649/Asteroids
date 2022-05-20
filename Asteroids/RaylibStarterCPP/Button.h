@@ -14,6 +14,7 @@ private:
 	// An optional message to be written on the button.
 	std::string message = "";
 
+	// The colour that the button's border will be drawn in.
 	Color buttonColor;
 
 public:
@@ -21,7 +22,9 @@ public:
 	Button(Vector2 pos, int width, int height, Color color, std::string message);
 
 	// Check if a point and the button are overlapping currently.
-	bool CheckButtonOverlap(Vector2 point);
+	bool CheckButtonOverlap(Vector2* point);
+
+	// Makes the button visible on the player's screen.
 	void DrawButton();
 };
 

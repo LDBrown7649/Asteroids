@@ -1,6 +1,6 @@
 #include "Asteroid.h"
 
-// An enum associating values with edges of the screen.
+// An enum associating integer values with edges of the screen.
 enum en_Edges {
 	Top = 0,
 	Bottom = 1,
@@ -16,26 +16,28 @@ Asteroid::~Asteroid()
 
 Asteroid::Asteroid()
 {
-	// Loads the default asteroid image.
+	// Loads one of the asteroid images (randomly chosen from the 3 options).
 	std::string imgAddress = "Images/Asteroid" + std::to_string(rand() % 3) + ".png";
 	img = LoadTexture(imgAddress.c_str());
 
-	// Chooses a random direction for the asteroid to travel in.
-	float moveAngle = (float)(rand() % 360) * DEG2RAD;
+	int randomValue = rand();
 
-	// Determines the velocity of the asteroid randomly
-	float speed = (float)(rand() % maxSpeed + 1.5f);
+	// Chooses a random direction for the asteroid to travel in.
+	float moveAngle = (float)(randomValue % 360) * DEG2RAD;
+
+	// Chooses a random speed between 1 and maxSpeed
+	float speed = (float)(randomValue % maxSpeed + 1);
 
 	// Uses the direction and speed calculated to determine the velocity vector for this object.
 	vel = { cos(moveAngle) * speed, sin(moveAngle) * speed };
 
 	// Randomly chooses 
-	int edgeBorder = rand() % 4;
+	int edgeBorder = randomValue % 4;
 
 	switch (edgeBorder) {
 	// Places a new asteroid along the top edge.
 	case Top:
-		pos.x = rand() % 600;
+		pos.x = (float)(randomValue % 600);
 		pos.y = -img.width * scale;
 
 		// Ensures that the largest component of velocity is perpendicular to the screen edge rather than parallel.
@@ -46,7 +48,7 @@ Asteroid::Asteroid()
 
 	// Places a new asteroid along the bottom edge.
 	case Bottom:
-		pos.x = rand() % 600;
+		pos.x = (float)(randomValue % 600);
 		pos.y = 600 + img.width * scale;
 
 		// Ensures that the largest component of velocity is perpendicular to the screen edge rather than parallel.
@@ -58,7 +60,7 @@ Asteroid::Asteroid()
 	// Places a new asteroid along the left edge.
 	case Left:
 		pos.x = -img.width * scale;
-		pos.y = rand() % 600;
+		pos.y = (float)(randomValue % 600);
 
 		// Ensures that the largest component of velocity is perpendicular to the screen edge rather than parallel.
 		if (abs(vel.x) < abs(vel.y)) {
@@ -69,7 +71,7 @@ Asteroid::Asteroid()
 		// Places a new asteroid along the right edge.
 	case Right:
 		pos.x = 600 + img.width * scale;
-		pos.y = rand() % 600;
+		pos.y = (float)(randomValue % 600);
 
 		// Ensures that the largest component of velocity is perpendicular to the screen edge rather than parallel.
 		if (abs(vel.x) < abs(vel.y)) {
@@ -90,6 +92,8 @@ Asteroid::Asteroid()
 
 Asteroid::Asteroid(Asteroid* parent)
 {
+	int randomValue = rand();
+
 	// Sets the asteroid's position to be the parent's position.
 	pos = parent->pos;
 
@@ -98,8 +102,8 @@ Asteroid::Asteroid(Asteroid* parent)
 	Vector2 parentDirection = { parent->vel.x / parentMagnitude, parent->vel.y / parentMagnitude };
 
 	// Randomly determines the initial speed and direction for the new asteroid.
-	float moveAngle = (float)(rand() % 360) * DEG2RAD;
-	float speed = (float)(rand() % maxSpeed + 1.5f);
+	float moveAngle = (float)(randomValue % 360) * DEG2RAD;
+	float speed = (float)(randomValue % maxSpeed + 1.5f);
 	rotation = moveAngle * RAD2DEG;
 	Vector2 initDirection = { cos(moveAngle), sin(moveAngle) };
 
@@ -130,7 +134,7 @@ Asteroid::Asteroid(Asteroid* parent)
 	collided = false;
 
 	// Loads one of the asteroid images.
-	std::string imgAddress = "Images/Asteroid" + std::to_string(rand() % 3) + ".png";
+	std::string imgAddress = "Images/Asteroid" + std::to_string(randomValue % 3) + ".png";
 	img = LoadTexture(imgAddress.c_str());
 
 	// Sets the scale of the asteroid based on its remaining health.

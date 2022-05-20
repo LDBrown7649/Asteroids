@@ -1,7 +1,6 @@
 #pragma once
 
 #include <random>
-#include <time.h>
 #include <string>
 #include "GameObject.h"
 
@@ -24,7 +23,7 @@ public:
 	}
 
 	// Returns a score associated with this asteroid, calculated so that smaller asteroids award more points.
-	int GetPoints() { return basePoints * (6 - health); }
+	int GetPoints() { return basePoints * (4 - health); }
 
 
 private:
@@ -35,15 +34,15 @@ private:
 	int health = 3;
 
 	// The base amount of points awarded for destroying an asteroid.
-	int basePoints = 50;
+	int basePoints = 100;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///// The following values are included to determine the direction of new asteroids that are	  /////
+  ///// The following values are used to determine the direction of new asteroids that are		  /////
   ///// created when existing asteroids "split". The higher the value, the more that factor will  /////
-  ///// effect the new asteroid's direction (as a weighted average).							  /////
+  ///// impact the new asteroid's direction (as a weighted average).							  /////
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 																									 //
-	// How much the new asteroid's direction should be affected by random factors.					 //
+	// How much the new asteroid's direction should be affected by the randomly chosen direction.	 //
 	int deflectionWeighting = 3;																	 //
 																									 //
 	// How much the parent's direction should affect the direction of the new asteroid.				 //

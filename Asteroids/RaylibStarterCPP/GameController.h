@@ -1,10 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <fstream>
 #include "Asteroid.h"
 #include "PlayerShip.h"
-#include "UFO.h"
-#include <fstream>
+#include "Button.h"
 
 enum class GameMode {
 	Menu,
@@ -47,7 +47,7 @@ private:
 	std::vector<Asteroid*> asteroids;
 
 	// The player's ship that they control in the game.
-	PlayerShip* ship;
+	PlayerShip* ship = nullptr;
 
 	// Performs the necessary operations to set up for the game to begin 
 	//(such as opening the game window, seeding the random generator, and setting the target fps).
@@ -87,6 +87,7 @@ private:
 
 	void ClearAsteroids();
 	void ResetGame();
+	void ResetScores();
 
 public:
 	// Holds all game functionality.

@@ -2,7 +2,6 @@
 
 #include <queue>
 #include "Bullet.h"
-#include "GameObject.h"
 
 class PlayerShip : public GameObject
 {

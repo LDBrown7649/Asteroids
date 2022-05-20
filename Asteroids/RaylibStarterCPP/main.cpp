@@ -26,3 +26,11 @@ int main(int argc, char* argv[])
     gc.PlayGame();
     return 0;
 }
+
+/*
+TO DO:
+    - Allow user to input their own name.
+    - Make player destruction more apparent
+    - Implement UFO class
+    - Add image transparency
+*/

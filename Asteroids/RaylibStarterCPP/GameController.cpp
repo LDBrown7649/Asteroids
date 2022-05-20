@@ -1,6 +1,4 @@
 #include "GameController.h"
-#include <iostream>
-#include "Button.h"
 
 
 /// <summary>
@@ -14,24 +12,44 @@ void GameController::LoadMenu()
     }
 
     // Creates a button for the player to press to begin the game.
-    Button playButton = Button(Vector2{ 150, 250 }, 250, 80, DARKBROWN, "PLAY ASTEROIDS!");
+    Button playButton = Button(Vector2{ 170, 250 }, 250, 80, DARKBROWN, "PLAY ASTEROIDS!");
+
+    // Creates a button for the player to press to reset the stored highscores.
+    Button resetHighscoreButton = Button(Vector2{ 170, 340 }, 250, 40, DARKBROWN, "RESET SCORES");
+
+    // Creates a button for the player to press to view the scoreboard.
+    Button scoreBoardButton = Button(Vector2{ 170, 390 }, 250, 40, DARKBROWN, "SCOREBOARD");
 
     // Creates a button for the player to press to quit.
-    Button quitButton = Button(Vector2{ 150, 350 }, 250, 80, DARKBROWN, "QUIT GAME");
+    Button quitButton = Button(Vector2{ 170, 440 }, 250, 80, DARKBROWN, "QUIT GAME");
 
     Vector2 mousePos = GetMousePosition();
 
     // Checks if the play button was pressed.
-    if (IsMouseButtonPressed(0) && playButton.CheckButtonOverlap(mousePos)) {
+    if (IsMouseButtonPressed(0) && playButton.CheckButtonOverlap(&mousePos)) {
         // Changes the game state from "Menu" to "Game"
-        ResetGame();
         gamestate = GameMode::Game;
+        ResetGame();
     }
 
     // Checks if the quit button was pressed
-    if (IsMouseButtonPressed(0) && quitButton.CheckButtonOverlap(mousePos)) {
+    if (IsMouseButtonPressed(0) && quitButton.CheckButtonOverlap(&mousePos)) {
         // Changes the game state from "Menu" to "Quit"
         gamestate = GameMode::Quit;
+    }
+
+    // Checks if the reset score button was pressed
+    if (IsMouseButtonPressed(0) && resetHighscoreButton.CheckButtonOverlap(&mousePos)) {
+        // Overwrites the saved highscores to a default state.
+        ResetScores();
+    }
+
+    // Checks if the scoreboard button was pressed
+    if (IsMouseButtonPressed(0) && scoreBoardButton.CheckButtonOverlap(&mousePos)) {
+        // Changes the game state from "Menu" to "Score"
+        gamestate = GameMode::Score;
+        GetScores();
+        UpdateScores();
     }
 
     // Draws the background asteroids, as well as the buttons.
@@ -44,6 +62,8 @@ void GameController::LoadMenu()
     DrawText("Asteroids!", 50, 80, 100, RAYWHITE);
     playButton.DrawButton();
     quitButton.DrawButton();
+    resetHighscoreButton.DrawButton();
+    scoreBoardButton.DrawButton();
     EndDrawing();
 }
 
@@ -56,29 +76,30 @@ void GameController::Scoreboard() {
     // Creates a button for the player to press to quit.
     Button quitButton = Button(Vector2{ 350, 500 }, 175, 75, DARKBROWN, "QUIT GAME");
 
+    Button menuButton = Button(Vector2{ 20, 20 }, 150, 50, DARKBROWN, "MENU");
+
     // Adds new background asteroids (if required)
     while (asteroids.size() < 5) {
         asteroids.push_back(new Asteroid());
     }
 
-    // Checks if the scores need to be read from the file.
-    if (scores[0] == 0) {
-        GetScores();
-        UpdateScores();
-    }
-
     Vector2 mousePos = GetMousePosition();
 
     // Checks if the quit button was pressed.
-    if (quitButton.CheckButtonOverlap(mousePos) && IsMouseButtonDown(0)) {
+    if (quitButton.CheckButtonOverlap(&mousePos) && IsMouseButtonDown(0)) {
         // Moves the game state from "Score" to "Quit"
         gamestate = GameMode::Quit;
     }
     // Checks if the play button was pressed.
-    if (playButton.CheckButtonOverlap(mousePos) && IsMouseButtonDown(0)) {
+    if (playButton.CheckButtonOverlap(&mousePos) && IsMouseButtonDown(0)) {
         ResetGame();
         // Moves the game state from "Score" to "Game"
         gamestate = GameMode::Game;
+    }
+
+    if (menuButton.CheckButtonOverlap(&mousePos) && IsMouseButtonDown(0)) {
+        // Moves the game state from "Score" to "Game"
+        gamestate = GameMode::Menu;
     }
 
     // Draws the highscore values and buttons, along with the background asteroids.
@@ -92,6 +113,7 @@ void GameController::Scoreboard() {
     }
     playButton.DrawButton();
     quitButton.DrawButton();
+    menuButton.DrawButton();
     for (int i = 0; i < 5; i++) {
         DrawText(std::to_string(scores[i]).c_str(), 200, 200 + 50 * i, 25, WHITE);
         DrawText(names[i].c_str(), 300, 200 + 50 * i, 25, WHITE);
@@ -162,8 +184,7 @@ void GameController::ResetGame()
     // Resets the player's name
     playerName = "Lachlan";
 
-    // Resets the score items
-    scores[0] = 0;
+    // Resets the score item
     currentScore = 0;
 
     // Resets the asteroids
@@ -173,6 +194,15 @@ void GameController::ResetGame()
     // Resets the player ship object.
     delete ship;
     ship = new PlayerShip();
+}
+
+void GameController::ResetScores()
+{
+    std::ofstream file("highscores.dat", std::ios::in);
+    for (int i = 0; i < 5; i++) {
+        file << "....... " + std::to_string(1000 - i * 100) << std::endl;
+    }
+    file.close();
 }
 
 void GameController::Setup()
@@ -208,6 +238,8 @@ void GameController::GameUpdate()
 
     if (ship->GetLives() <= 0){
         gamestate = GameMode::Score;
+        GetScores();
+        UpdateScores();
     }
 }
 
@@ -236,18 +268,14 @@ void GameController::GameDraw()
 
 void GameController::Shutdown()
 {
+    GetScores();
+    UpdateScores();
     CloseWindow();
 
     // Deletes the ship and asteroids, and sets each pointer to the null pointer.
     delete ship;
     ship = nullptr;
     ClearAsteroids();
-
-    if (scores[0] == 0) {
-        GetScores();
-    }
-
-    UpdateScores();
 }
 
 void GameController::UpdateScores() {

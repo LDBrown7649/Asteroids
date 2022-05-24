@@ -3,7 +3,7 @@
 PlayerShip::PlayerShip()
 {
 	// Resets the ship's position to the centre of the screen.
-	ResetPosition();
+	Reset();
 	scale = 0.25f;
 	// Loads both images associated with the ship (when accelerating and when not accelerating).
 	MovingImage = LoadTexture("Images/shipThrusting.png");
@@ -44,12 +44,13 @@ void PlayerShip::Draw()
 	}
 }
 
-void PlayerShip::ResetPosition()
+void PlayerShip::Reset()
 {
 	// Sets the ship's velocity, position, and rotation to default values.
 	vel = { 0,0 };
 	pos = { 300, 300 };
 	rotation = 0;
+	collided = false;
 }
 
 void PlayerShip::Update()
@@ -121,8 +122,7 @@ void PlayerShip::Update()
 
 	// If the ship has collided with an asteroid, reset its position to 0 and lose one health.
 	if (collided) {
-		collided = false;
-		ResetPosition();
+		Reset();
 		lives--;
 	}
 }

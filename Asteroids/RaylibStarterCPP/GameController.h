@@ -2,9 +2,9 @@
 
 #include <vector>
 #include <fstream>
-#include "Asteroid.h"
 #include "PlayerShip.h"
 #include "Button.h"
+#include "AsteroidHandler.h"
 
 // An enum for classifying different states the game can be in.
 enum class GameMode {
@@ -28,21 +28,6 @@ private: // Variables
 	// The ship the player controls in the game.
 	PlayerShip* ship = nullptr;
 
-	// A vector of pointers to asteroid objects.
-	std::vector<Asteroid*> asteroids;
-
-	// The number of asteroids that should be spawned into the scene.
-	int numAsteroids = 1;
-
-	// A limit on the amount of asteroids that can be present in any scene.
-	int maxNumAsteroids = 6;
-
-	// Tracks how many frames have elapsed since the game had asteroids present.
-	int timeSinceAsteroids = 0;
-
-	// The maximum number of elapsed frames before more asteroids should be added.
-	int maxTimeSinceAsteroids = 60;
-
 	// The player's current score.
 	int currentScore = 0;
 
@@ -65,6 +50,8 @@ private: // Variables
 	bool endgame = false;
 
 	std::vector<Button*> buttons;
+
+	AsteroidHandler asteroidHandler;
 
 public: // Functions
 
@@ -108,18 +95,5 @@ private: // Functions
 
 	// Sets the highscore list to a default state (names are all "..........", scores are 1000, 900, 800, 700, 600).
 	void ResetScores();
-
-	// Checks that the scene has the correct amount of asteroids, adding more or breaking existing ones as required.
-	void UpdateAsteroids();
-
-	// Remove all asteroids from the scene and delete them.
-	void ClearAsteroids();
-
-	// A method for continuing to update and draw asteroids while in the background of the menu screens.
-	void DrawMenuAsteroids();
-
-	// Removes the asteroid at the specified index from the scene. If it had sufficient health, replace it with two
-	// smaller "children" asteroids. Increases or decreases the number of existing asteroids to reflect the result.
-	void BreakAsteroid(int asteroidIndex, int* numAsteroids);
 };
 

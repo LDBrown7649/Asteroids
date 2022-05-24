@@ -26,10 +26,6 @@ public:
 	// A function for setting the position of a game object.
 	void SetPos(Vector2 value) { pos = value; }
 
-	// Functions for getting the width and height of the game object on the screen.
-	float GetWidth() { return scale * img.width; }
-	float GetHeight() { return scale * img.height; }
-
 	// A function for checking if this game object has collided with another game object.
 	void CheckCollision(GameObject* other);
 
@@ -46,5 +42,9 @@ protected:
 	// The rotation and scale of the game object
 	float scale = 1;
 	float rotation = 0;
+
+	// Functions for getting the width and height of the game object on the screen.
+	float GetWidth() { return scale * img.width; }
+	float GetHeight() { return scale * img.height; }
 };
 

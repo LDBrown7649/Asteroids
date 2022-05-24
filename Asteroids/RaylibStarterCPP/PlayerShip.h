@@ -20,7 +20,7 @@ public:
 	std::deque<Bullet*>* GetBullets() { return &bulletQueue; }
 
 	// Resets the player's position to the centre of the screen.
-	void ResetPosition();
+	void Reset();
 
 	// Returns the number of lives that the player currently has.
 	int GetLives() { return lives; }

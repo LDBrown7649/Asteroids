@@ -15,7 +15,7 @@ void Bullet::Update()
 	lifeExpended++;
 
 	// Set the collided flag to true if the bullet has existed for longer than maxLife allows, informing the program to remove the bullet.
-	if (lifeExpended > maxLife) {
+	if (lifeExpended > maxLifetime) {
 		collided = true;
 	}
 }
@@ -42,10 +42,4 @@ Bullet::Bullet(Vector2* shipPos, float shipRot)
 	// Set the correct velocity of the bullet.
 	vel.x *= shootSpeed;
 	vel.y *= shootSpeed;
-}
-
-void Bullet::Draw()
-{
-	// Draws the bullet to the screen in the correct position.
-	DrawTextureEx(img, pos, -rotation, scale, WHITE);
 }

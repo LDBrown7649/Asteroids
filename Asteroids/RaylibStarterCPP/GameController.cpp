@@ -57,7 +57,7 @@ void GameController::Shutdown()
     // Deletes the ship and asteroids, and sets each pointer to the null pointer.
     delete ship;
     ship = nullptr;
-    ClearAsteroids();
+    asteroidHandler.Clear();
 }
 
 void GameController::LoadMenu()
@@ -71,7 +71,7 @@ void GameController::LoadMenu()
     // Draws the background asteroids, as well as the buttons.
     BeginDrawing();
     ClearBackground(BLACK);
-    DrawMenuAsteroids();
+    asteroidHandler.MenuAsteroidUpdate();
     DrawText("Asteroids!", 50, 80, 100, RAYWHITE);
     playButton.DrawButton();
     quitButton.DrawButton();
@@ -110,7 +110,7 @@ void GameController::GameUpdate()
     CheckCollisions();
 
     // Checks which asteroids need to split or be removed.
-    UpdateAsteroids();
+    asteroidHandler.Update();
 
     // Updates the ship (and the attached bullet objects)
     ship->Update();
@@ -129,7 +129,7 @@ void GameController::CheckCollisions()
     // Retrieves the list of bullets from the ship object.
     std::deque<Bullet*>* bullets = ship->GetBullets();
 
-    for (Asteroid* asteroid : asteroids) {
+    for (Asteroid* asteroid : *asteroidHandler.GetAsteroids()) {
         for (Bullet* bullet : *bullets) {
             // Checks collisions between each asteroid and bullet.
             bullet->CheckCollision(asteroid);
@@ -137,6 +137,10 @@ void GameController::CheckCollisions()
 
         // Checks collisions between each asteroid and the ship.
         ship->CheckCollision(asteroid);
+        if (asteroid->collided) {
+            // Increases the player's current point score by the asteroid's point value.
+            currentScore += asteroid->GetPoints();
+        }
     }
 }
 
@@ -154,9 +158,7 @@ void GameController::GameDraw()
     DrawText(std::to_string(highscore).c_str(), 500, 5, 18, WHITE);
 
     // Draws each asteroid, the ship, and the bullets (as part of the ship drawing process).
-    for (Asteroid* asteroid : asteroids) {
-        asteroid->Draw();
-    }
+    asteroidHandler.DrawAsteroids();
     ship->Draw();
 
     EndDrawing();
@@ -168,8 +170,7 @@ void GameController::ResetGame()
     currentScore = 0;
 
     // Resets the asteroids
-    ClearAsteroids();
-    numAsteroids = 1;
+    asteroidHandler.Clear();
 
     // Resets the player ship object.
     delete ship;
@@ -203,7 +204,7 @@ void GameController::GetName() {
         BeginDrawing();
         ClearBackground(BLACK);
         // Draws the asteroids to the screen.
-        DrawMenuAsteroids();
+        asteroidHandler.MenuAsteroidUpdate();
         // Displays the player's input.
         DrawText("ENTER NAME:", 200, 250, 30, RAYWHITE);
         DrawText((playerName + "_").c_str(), 200, 350, 30, RAYWHITE);
@@ -224,7 +225,7 @@ void GameController::Scoreboard() {
     BeginDrawing();
     ClearBackground(BLACK);
     // Draws the asteroids in the background of the scene.
-    DrawMenuAsteroids();
+    asteroidHandler.MenuAsteroidUpdate();
     // Draws the buttons for the player to press
     playButton.DrawButton();
     menuButton.DrawButton();
@@ -287,108 +288,4 @@ void GameController::ResetScores()
         file << ".......... " + std::to_string(1000 - i * 100) << std::endl;
     }
     file.close();
-}
-
-void GameController::UpdateAsteroids()
-{
-    int size = asteroids.size();
-    if (size == 0) {
-        // If there have been no asteroids for a specified number of frames, add new asteroids.
-        if (timeSinceAsteroids >= maxTimeSinceAsteroids) {
-
-            // Adds new asteroids to the scene until the correct number have been added
-            for (int i = 0; i < numAsteroids; i++) {
-                asteroids.push_back(new Asteroid());
-            }
-            // Increases the number of asteroids that will be created next time unless the maximum value has been reached.
-            if (numAsteroids < maxNumAsteroids) {
-                numAsteroids++;
-            }
-            // Resets the timer tracking how many frames have elapsed since asteroids were in the scene.
-            timeSinceAsteroids = 0;
-        }
-        // Otherwise, increase the number of frames elapsed since asteroids were in the scene.
-        else {
-            timeSinceAsteroids++;
-        }
-    }
-    else {
-        // Check how many asteroids were previously collided with and should therefore "break".
-        for (int i = 0; i < size; i++) {
-            if (asteroids[i]->collided) {
-                // Increases the player's current point score by the asteroid's point value.
-                currentScore += asteroids[i]->GetPoints();
-                BreakAsteroid(i, &size);
-            }
-            // Update the asteroid if it did not break.
-            else {
-                asteroids[i]->Update();
-            }
-        }
-    }
-}
-
-void GameController::ClearAsteroids()
-{
-    // Deletes each asteroid before clearing the asteroid vector.
-    for (Asteroid* asteroid : asteroids) {
-        delete asteroid;
-        asteroid = nullptr;
-    }
-    asteroids.clear();
-}
-
-void GameController::DrawMenuAsteroids()
-{
-    // Adds new background asteroids until 5 are in the scene.
-    while (asteroids.size() < 5) {
-        asteroids.push_back(new Asteroid());
-    }
-
-    // Moves and draws the asteroids.
-    for (Asteroid* asteroid : asteroids) {
-        asteroid->Update();
-        asteroid->Draw();
-    }
-}
-
-/// <summary>
-
-/// </summary>
-/// <param name="asteroidIndex">The index of the asteroid to be removed</param>
-/// <param name="numAsteroids">A reference to the current number of existing asteroids.</param>
-void GameController::BreakAsteroid(int asteroidIndex, int* numAsteroids)
-{
-    // Checks if the asteroid has any health remaining
-    if (asteroids[asteroidIndex]->GetHealth() > 1) {
-        // Adds a new asteroid to the end of the vector.
-        asteroids.push_back(new Asteroid(asteroids[asteroidIndex]));
-
-        // Creates a new asteroid pointer
-        Asteroid* tempAsteroid = new Asteroid(asteroids[asteroidIndex]);
-
-        // Deletes the existing asteroid and replaces it with the one currently at the end of the array.
-        delete asteroids[asteroidIndex];
-        asteroids[asteroidIndex] = asteroids[(*numAsteroids) - 1];
-
-        // Sets the asteroid at the end of the array to the new asteroid pointer.
-        asteroids[(*numAsteroids) - 1] = tempAsteroid;
-
-        // Shows that the total number of asteroids in the scene has increased by 1
-        (*numAsteroids)++;
-    }
-
-    else {
-        // Deletes the existing asteroid.
-        delete asteroids[asteroidIndex];
-
-        // Replaces the pointer at this index with the one at the end of the array.
-        asteroids[asteroidIndex] = asteroids[*numAsteroids - 1];
-
-        // Removes the asteroid array's final value (after it is moved to fill the empty place).
-        asteroids.pop_back();
-
-        // Shows that the total number of asteroids in the scene has decreased by 1
-        (*numAsteroids)--;
-    }
 }

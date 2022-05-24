@@ -29,8 +29,7 @@ int main(int argc, char* argv[])
 
 /*
 TO DO:
-    - Make player destruction more apparent (Sound?)
-    - Implement UFO class
+    - Implement ScoreHandler.
+    - Refactor AsteroidHandler
     - Add image transparency
-    - Add sound effects
 */

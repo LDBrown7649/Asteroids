@@ -35,7 +35,7 @@ Vector2 GameObject::DrawOffset()
 {
 	// The distance from the edge of the object to the centre.
 	float widthMoveDist = GetWidth() / 2;
-	float heightMoveDist = GetWidth() / 2;
+	float heightMoveDist = GetHeight() / 2;
 
 	// Moves the position of the object to be centred along the top edge.
 	Vector2 centredVec = { 

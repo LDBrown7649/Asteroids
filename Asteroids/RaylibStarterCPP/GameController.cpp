@@ -33,6 +33,7 @@ void GameController::PlayGame()
 
 void GameController::Setup()
 {
+    scoreHandler = ScoreHandler(&asteroidHandler);
     // Opens the window with the current screen width and height.
     InitWindow(screenWidth, screenHeight, "ASTEROIDS!");
 
@@ -51,8 +52,8 @@ void GameController::Shutdown()
     CloseWindow();
 
     // Updates the score values in the highscores file.
-    GetScores();
-    UpdateScores();
+    scoreHandler.GetScores();
+    scoreHandler.UpdateScores();
 
     // Deletes the ship and asteroids, and sets each pointer to the null pointer.
     delete ship;
@@ -93,13 +94,13 @@ void GameController::LoadMenu()
         }
         else if (resetHighscoreButton.CheckButtonOverlap(&mousePos)) {
             // Overwrites the saved highscores to a default state if the reset button was pressed.
-            ResetScores();
+            scoreHandler.ResetScores();
         }
         else if (scoreBoardButton.CheckButtonOverlap(&mousePos)) {
             // Changes the game state from "Menu" to "Score" if the scoreboard button was pressed.
             gamestate = GameMode::Score;
-            GetScores();
-            UpdateScores();
+            scoreHandler.GetScores();
+            scoreHandler.UpdateScores();
         }
     }
 }
@@ -118,9 +119,8 @@ void GameController::GameUpdate()
     // If the player ship has run out of lives, ask the player for their name and switch to the scoreboard.
     if (ship->GetLives() <= 0) {
         gamestate = GameMode::Score;
-        GetName();
-        GetScores();
-        UpdateScores();
+        scoreHandler.GetName();
+        scoreHandler.UpdateScores();
     }
 }
 
@@ -139,7 +139,7 @@ void GameController::CheckCollisions()
         ship->CheckCollision(asteroid);
         if (asteroid->collided) {
             // Increases the player's current point score by the asteroid's point value.
-            currentScore += asteroid->GetPoints();
+            scoreHandler.AddScore(asteroid->GetPoints());
         }
     }
 }
@@ -149,13 +149,8 @@ void GameController::GameDraw()
     BeginDrawing();
 
     ClearBackground(BLACK);
-    // Draws the player's current score to the top-left of the screen
-    DrawText(std::to_string(currentScore).c_str(), 20, 5, 18, WHITE);
-
-    // Displays the highest score recorded so far (and who achieved it).
-    DrawText("HIGHSCORE:", 370, 5, 18, WHITE);
-    DrawText(highscoreName.c_str(), 370, 25, 18, WHITE);
-    DrawText(std::to_string(highscore).c_str(), 500, 5, 18, WHITE);
+    // Draws the player's current score and the highest score to the screen
+    scoreHandler.DrawScores();
 
     // Draws each asteroid, the ship, and the bullets (as part of the ship drawing process).
     asteroidHandler.DrawAsteroids();
@@ -167,7 +162,7 @@ void GameController::GameDraw()
 void GameController::ResetGame()
 {
     // Resets the current score to 0.
-    currentScore = 0;
+    scoreHandler.SetScore(0);
 
     // Resets the asteroids
     asteroidHandler.Clear();
@@ -176,45 +171,7 @@ void GameController::ResetGame()
     delete ship;
     ship = new PlayerShip();
 
-    // Opens the highscores file, reads the current highest score, and closes the file. 
-    std::ifstream file("highscores.dat", std::ios::in);
-    file >> highscoreName;
-    file >> highscore;
-    file.close();
-}
-
-void GameController::GetName() {
-    bool proceed = false;
-    // Resets the player's name.
-    playerName = "";
-    while (!IsKeyPressed(KEY_ENTER)) {
-        // Stores the key currently pressed (stores 0 if no key was pressed)
-        int letter = GetKeyPressed();
-        int nameLength = playerName.size();
-
-        // Removes the last character from the name (provided there is at least one letter to remove).
-        if (IsKeyPressed(KEY_BACKSPACE) && nameLength >= 1) {
-            playerName.pop_back();
-        }
-        // Adds the letter to the name (provided a key other than SPACE was entered, and the name is less than 10 characters).
-        else if (letter != 0 && letter != KEY_SPACE && nameLength < 10) {
-            playerName += (KeyboardKey)letter;
-        }
-
-        BeginDrawing();
-        ClearBackground(BLACK);
-        // Draws the asteroids to the screen.
-        asteroidHandler.MenuAsteroidUpdate();
-        // Displays the player's input.
-        DrawText("ENTER NAME:", 200, 250, 30, RAYWHITE);
-        DrawText((playerName + "_").c_str(), 200, 350, 30, RAYWHITE);
-        DrawText("Press ENTER to confirm", 10, 550, 15, RAYWHITE);
-        EndDrawing();
-    }
-    // If no name has been entered so far, set a default name.
-    if (playerName == "") {
-        playerName = "UNKNOWN_PLAYER";
-    }
+    scoreHandler.GetHighScore();
 }
 
 void GameController::Scoreboard() {
@@ -229,12 +186,8 @@ void GameController::Scoreboard() {
     // Draws the buttons for the player to press
     playButton.DrawButton();
     menuButton.DrawButton();
-    // Draws the current highscores.
-    DrawText("HIGH SCORES!", 120, 100, 50, WHITE);
-    for (int i = 0; i < 5; i++) {
-        DrawText(std::to_string(scores[i]).c_str(), 200, 200 + 50 * i, 25, WHITE);
-        DrawText(names[i].c_str(), 300, 200 + 50 * i, 25, WHITE);
-    }
+    scoreHandler.DrawScoreboard();
+    
     EndDrawing();
     // Checks if the player clicked on the screen.
     if (IsMouseButtonPressed(0)) {
@@ -249,43 +202,4 @@ void GameController::Scoreboard() {
             gamestate = GameMode::Menu;
         }
     }
-}
-
-void GameController::GetScores() {
-    // Retrieves the scores and names from the highscores file.
-    std::fstream file("highscores.dat", std::ios::in);
-    for (int i = 0; i < 5; i++) {
-        file >> names[i];
-        file >> scores[i];
-    }
-    file.close();
-}
-
-void GameController::UpdateScores() {
-    std::fstream file("highscores.dat", std::ios::out);
-    // Compares the current score to each highscore value, going down the list.
-    for (int i = 0; i < 5; i++) {
-        // If the score is greater than the current highscore, replace the values with each other.
-        if (currentScore > scores[i]) {
-            std::string tempName = names[i];
-            int tempScore = scores[i];
-            names[i] = playerName;
-            scores[i] = currentScore;
-            playerName = tempName;
-            currentScore = tempScore;
-        }
-        // Prints the high score to the file.
-        file << names[i] << " " << std::to_string(scores[i]) << std::endl;
-    }
-    file.close();
-}
-
-void GameController::ResetScores()
-{
-    // Sets each highscore in the file to be a default value.
-    std::ofstream file("highscores.dat", std::ios::in);
-    for (int i = 0; i < 5; i++) {
-        file << ".......... " + std::to_string(1000 - i * 100) << std::endl;
-    }
-    file.close();
 }

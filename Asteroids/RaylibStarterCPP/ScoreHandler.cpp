@@ -51,7 +51,7 @@ void ScoreHandler::GetName()
         DrawText("Press ENTER to confirm", 10, 550, 15, RAYWHITE);
         EndDrawing();
     }
-    // If no name has been entered so far, set a default name.
+    // If no name has been entered, set a default name.
     if (playerName == "") {
         playerName = "UNKNOWN_PLAYER";
     }
@@ -97,6 +97,8 @@ void ScoreHandler::ResetScores()
         file << ".......... " + std::to_string(1000 - i * 100) << std::endl;
     }
     file.close();
+    // Resets the player's current score value.
+    currentScore = 0;
 }
 
 void ScoreHandler::DrawScoreboard()

@@ -58,5 +58,9 @@ private:
 	bool accelerating = false;
 
 	short visibility = 255;
+
+	void CheckUserInput();
+
+	void UpdateBullets();
 };
 

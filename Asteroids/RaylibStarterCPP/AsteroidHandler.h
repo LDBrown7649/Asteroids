@@ -22,6 +22,9 @@ private:
 	// Splits an asteroid into smaller pieces, or destroys it completely depending on its size.
 	void BreakAsteroid(int asteroidNum, int* numAsteroids);
 
+	// Adds new asteroids to the scene
+	void AddAsteroids();
+
 public:
 	// Updates the position and state of each asteroid.
 	void Update();

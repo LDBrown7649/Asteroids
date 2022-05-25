@@ -64,80 +64,33 @@ void PlayerShip::Reset()
 
 void PlayerShip::Update()
 {
-	// Continuously increases the visibility of the ship until it is fully visible.
-	if (visibility != 255) {
-		visibility += 5;
-	}
-
-	// Make the ship immune if it is not fully visible.
-	else {
-		immune = false;
-	}
-	// Converts the rotation from degrees to radians.
-	float Rad = rotation * DEG2RAD;
-
 	// Resets acceleration to 0.
 	accel = { 0, 0 };
 	accelerating = false;
 
-	// Adds to or subtracts from rotation if the A or D key is pressed.
-	if (IsKeyDown(KEY_A)) {
-		rotation += rotSpeed;
+	// Continuously increases the visibility of the ship until it is fully visible.
+	if (visibility != 255) {
+		visibility += 5;
 	}
-	if(IsKeyDown(KEY_D))  {
-		rotation -= rotSpeed;
+	// Make the ship immune if it is not fully visible.
+	else {
+		immune = false;
 	}
-
-	// Accelerates forwards if the W key is pressed.
-	if (IsKeyDown(KEY_W)) {
-		accel.y = (float)cos(Rad) * accelSpeed;
-		accel.x = (float)sin(Rad) * accelSpeed;
-		accelerating = true;
-	}
-	
+	CheckUserInput();
 	// Applies acceleration to velocity.
 	vel.y += accel.y;
 	vel.x += accel.x;
-
 	// Applies drag to velocity.
 	vel.x *= drag;
 	vel.y *= drag;
 
-	// Applies velocity to position
+	// Applies velocity to position and checks for screen wrapping.
 	GameObject::Update();
 
-	// Fires a bullet from the front of the player's ship.
-	if (IsKeyPressed(KEY_SPACE)) {
-		Shoot();
-	}
-
-	// Checks if there are bullets in the queue.
+	// Updates the bullets' positions if the bullet queue is not empty.
 	if (!bulletQueue.empty()) {
-		int size = bulletQueue.size();
-		for (int i = 0; i < size; i++) {
-			if (bulletQueue[i]->collided) {
-
-				// Replaces this value with the value at the end of the queue
-				delete bulletQueue[i];
-				bulletQueue[i] = bulletQueue.back();
-
-				// Removes the end value.
-				bulletQueue.pop_back();
-
-				// Decreases the size value to reflect the queue losing a value.
-				size--;
-
-				// Decrements i, ensuring that the new value will be checked before moving on in the for loop.
-				i--;
-			}
-		}
-		// Updates each remaining bullet's position.
-		for (Bullet* bullet : bulletQueue) {
-			bullet->Update();
-		}
-		
+		UpdateBullets();
 	}
-
 	// If the ship has collided with an asteroid, reset its position to 0 and lose one health.
 	if (collided) {
 		Reset();
@@ -156,4 +109,54 @@ void PlayerShip::Shoot()
 
 	// Creates a new bullet and adds it to the queue.
 	bulletQueue.push_back(new Bullet(&pos, rotation));
+}
+
+void PlayerShip::CheckUserInput() {
+	// Converts the rotation from degrees to radians.
+	float Rad = rotation * DEG2RAD;
+
+	// Adds to or subtracts from rotation if the A or D key is pressed.
+	if (IsKeyDown(KEY_A)) {
+		rotation += rotSpeed;
+	}
+	if (IsKeyDown(KEY_D)) {
+		rotation -= rotSpeed;
+	}
+
+	// Accelerates forwards if the W key is pressed.
+	if (IsKeyDown(KEY_W)) {
+		accel.y = (float)cos(Rad) * accelSpeed;
+		accel.x = (float)sin(Rad) * accelSpeed;
+		accelerating = true;
+	}
+
+	// Fires a bullet from the front of the player's ship.
+	if (IsKeyPressed(KEY_SPACE)) {
+		Shoot();
+	}
+}
+
+void PlayerShip::UpdateBullets() {
+	int size = bulletQueue.size();
+	for (int i = 0; i < size; i++) {
+		if (bulletQueue[i]->collided) {
+
+			// Replaces this value with the value at the end of the queue
+			delete bulletQueue[i];
+			bulletQueue[i] = bulletQueue.back();
+
+			// Removes the end value.
+			bulletQueue.pop_back();
+
+			// Decreases the size value to reflect the queue losing a value.
+			size--;
+
+			// Decrements i, ensuring that the new value will be checked before moving on in the for loop.
+			i--;
+		}
+	}
+	// Updates each remaining bullet's position.
+	for (Bullet* bullet : bulletQueue) {
+		bullet->Update();
+	}
 }

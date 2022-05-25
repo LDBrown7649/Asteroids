@@ -26,10 +26,3 @@ int main(int argc, char* argv[])
     gc.PlayGame();
     return 0;
 }
-
-/*
-TO DO:
-    - Implement ScoreHandler.
-    - Refactor AsteroidHandler
-    - Add image transparency
-*/

@@ -32,14 +32,19 @@ public:
 
 
 private:
-	// The max speed that the asteroid can travel at.
-	int maxSpeed = 3;
+	// The min and max speeds that the asteroid can travel at.
+	float maxSpeed = 3.5f;
+	float minSpeed = 2.f;
 
 	// The asteroid's current health, representing how many times it can be broken apart before being destroyed.
 	int health = 3;
 
 	// The base amount of points awarded for destroying an asteroid.
 	int basePoints = 100;
+
+	Vector2 CalculateDeflection(Vector2* parentVector, Vector2* deflectionVector);
+
+	void CalculateDirection(int randNum);
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////
   ///// The following values are used to determine the direction of new asteroids that are		  /////
@@ -48,10 +53,10 @@ private:
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 																									 //
 	// How much the new asteroid's direction should be affected by the randomly chosen direction.	 //
-	int deflectionWeighting = 3;																	 //
+	int deflectionWeighting = 4;																	 //
 																									 //
 	// How much the parent's direction should affect the direction of the new asteroid.				 //
-	int parentWeighting = 2;																		 //
+	int parentWeighting = 3;																		 //
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 };
 

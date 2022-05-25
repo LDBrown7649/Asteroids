@@ -26,15 +26,18 @@ PlayerShip::~PlayerShip()
 
 void PlayerShip::Draw()
 {
+	// Controls how visible the ship is to allow for a "fade-in" effect after respawning.
+	Color drawColor = { visibility, visibility, visibility, visibility };
 	// Calculates the centre of the image.
 	Vector2 drawPos = this->DrawOffset();
 
+	// Draws the player's lives to the screen in the form of miniature ships in the top left.
 	for (int i = 0; i < lives; i++) {
 		DrawTextureEx(img, { (30.f * i), 30 }, 0, scale / 2, WHITE);
 	}
 
 	// Draws the ship's texture to the screen, choosing which one to draw based on if the ship is accelerating or not.
-	DrawTextureEx(accelerating ? MovingImage : img, drawPos, -rotation, scale, WHITE);
+	DrawTextureEx(accelerating ? MovingImage : img, drawPos, -rotation, scale, drawColor);
 
 	// Draws each bullet to the screen (if there are bullets to draw).
 	if (!bulletQueue.empty()) {
@@ -50,11 +53,26 @@ void PlayerShip::Reset()
 	vel = { 0,0 };
 	pos = { 300, 300 };
 	rotation = 0;
+
+	// Sets the collision and invincibility information to default states.
 	collided = false;
+	immune = true;
+
+	// Sets the ship's visibility to fully transparent
+	visibility = 0;
 }
 
 void PlayerShip::Update()
 {
+	// Continuously increases the visibility of the ship until it is fully visible.
+	if (visibility != 255) {
+		visibility += 5;
+	}
+
+	// Make the ship immune if it is not fully visible.
+	else {
+		immune = false;
+	}
 	// Converts the rotation from degrees to radians.
 	float Rad = rotation * DEG2RAD;
 

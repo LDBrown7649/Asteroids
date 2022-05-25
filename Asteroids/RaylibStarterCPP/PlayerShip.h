@@ -25,6 +25,9 @@ public:
 	// Returns the number of lives that the player currently has.
 	int GetLives() { return lives; }
 
+	// A boolean tracking if the ship is immune from collisions or not
+	bool immune = false;
+
 private:
 	// A double-ended queue consisting of pointers to bullets.
 	std::deque<Bullet*> bulletQueue;
@@ -53,5 +56,7 @@ private:
 
 	// A boolean for tracking when the player is accelerating.
 	bool accelerating = false;
+
+	short visibility = 255;
 };
 

@@ -2,10 +2,13 @@
 
 ScoreHandler::ScoreHandler()
 {
+    // Sets the pointer to the asteroid handler to null.
+    backgroundAsteroids = nullptr;
 }
 
 ScoreHandler::ScoreHandler(AsteroidHandler* asteroidHandler)
 {
+    // Stores a pointer to an existing asteroidHandler.
     backgroundAsteroids = asteroidHandler;
 }
 
@@ -20,7 +23,6 @@ void ScoreHandler::GetHighScore()
 
 void ScoreHandler::GetName()
 {
-    bool proceed = false;
     // Resets the player's name.
     playerName = "";
     while (!IsKeyPressed(KEY_ENTER)) {
@@ -40,7 +42,9 @@ void ScoreHandler::GetName()
         BeginDrawing();
         ClearBackground(BLACK);
         // Draws the asteroids to the screen.
-        backgroundAsteroids->MenuAsteroidUpdate();
+        if (backgroundAsteroids != nullptr) {
+            backgroundAsteroids->MenuAsteroidUpdate();
+        }
         // Displays the player's input.
         DrawText("ENTER NAME:", 200, 250, 30, RAYWHITE);
         DrawText((playerName + "_").c_str(), 200, 350, 30, RAYWHITE);

@@ -88,6 +88,7 @@ void AsteroidHandler::Clear()
 
 void AsteroidHandler::DrawAsteroids()
 {
+    // Draws each asteroid to the screen.
     for (Asteroid* asteroid : asteroids) {
         asteroid->Draw();
     }
@@ -95,7 +96,7 @@ void AsteroidHandler::DrawAsteroids()
 
 void AsteroidHandler::MenuAsteroidUpdate()
 {
-    // Adds new background asteroids until 5 are in the scene.
+    // Adds new background asteroids until at least 5 are in the scene.
     while (asteroids.size() < 5) {
         asteroids.push_back(new Asteroid());
     }

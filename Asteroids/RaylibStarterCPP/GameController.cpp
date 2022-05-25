@@ -33,6 +33,7 @@ void GameController::PlayGame()
 
 void GameController::Setup()
 {
+    // Creates a new ScoreHandler, passing in a reference to the asteroid handler.
     scoreHandler = ScoreHandler(&asteroidHandler);
     // Opens the window with the current screen width and height.
     InitWindow(screenWidth, screenHeight, "ASTEROIDS!");
@@ -52,7 +53,6 @@ void GameController::Shutdown()
     CloseWindow();
 
     // Updates the score values in the highscores file.
-    scoreHandler.GetScores();
     scoreHandler.UpdateScores();
 
     // Deletes the ship and asteroids, and sets each pointer to the null pointer.
@@ -99,7 +99,6 @@ void GameController::LoadMenu()
         else if (scoreBoardButton.CheckButtonOverlap(&mousePos)) {
             // Changes the game state from "Menu" to "Score" if the scoreboard button was pressed.
             gamestate = GameMode::Score;
-            scoreHandler.GetScores();
             scoreHandler.UpdateScores();
         }
     }
@@ -135,8 +134,11 @@ void GameController::CheckCollisions()
             bullet->CheckCollision(asteroid);
         }
 
-        // Checks collisions between each asteroid and the ship.
-        ship->CheckCollision(asteroid);
+        // Checks collisions between each asteroid and the ship if they are not currently immune.
+        if (!ship->immune) {
+            ship->CheckCollision(asteroid);
+        }
+        
         if (asteroid->collided) {
             // Increases the player's current point score by the asteroid's point value.
             scoreHandler.AddScore(asteroid->GetPoints());

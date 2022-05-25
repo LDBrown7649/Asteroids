@@ -1,13 +1,13 @@
 #pragma once
 
 #include <fstream>
-#include "Button.h"
 #include "AsteroidHandler.h"
 
 class ScoreHandler
 {
 private:
 
+	// The asteroids that are used by the game handler script.
 	AsteroidHandler* backgroundAsteroids;
 
 	// The player's current score.
@@ -29,15 +29,19 @@ private:
 	std::string playerName = "UNKNOWN_PLAYER";
 
 public:
+	// A default constructor for the score handler.
 	ScoreHandler();
+
+	// A constructor for the score handler that has a reference to an asteroid handler.
 	ScoreHandler(AsteroidHandler* asteroidHandler);
 
-	int GetCurrentScore() { return currentScore; }
-
+	// Adds to the current score value by a specified amount.
 	void AddScore(int scoreToAdd) { currentScore += scoreToAdd; }
 
+	// Sets the score to a given value.
 	void SetScore(int scoreVal) { currentScore = scoreVal; }
 
+	// Gets the highscore value from the highscores data file.
 	void GetHighScore();
 
 	// Gets the player's name at the end of the game.
@@ -52,8 +56,10 @@ public:
 	// Sets the highscore list to a default state (names are all "..........", scores are 1000, 900, 800, 700, 600).
 	void ResetScores();
 
+	// Draws the scoreboard values to the screen.
 	void DrawScoreboard();
 
+	// Draws the current score and the current highscore value.
 	void DrawScores();
 };
 

@@ -177,7 +177,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayerShip.cpp" />
     <ClCompile Include="ScoreHandler.cpp" />
-    <ClCompile Include="UFO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asteroid.h" />
@@ -188,7 +187,6 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="PlayerShip.h" />
     <ClInclude Include="ScoreHandler.h" />
-    <ClInclude Include="UFO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

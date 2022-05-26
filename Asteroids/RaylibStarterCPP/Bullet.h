@@ -4,22 +4,24 @@
 class Bullet : public GameObject
 {
 public:
-	// A bullet destructor
-	~Bullet();
-
-	// A constructor for generating new bullets at the player's location.
+	/// <summary> A constructor for generating new bullets at the player's location. </summary>
+	/// <param name = "shipPos">: The position of the ship that is firing the bullet.</param>
+	/// <param name = "shipRot">: The rotation of the ship that is firing the bullet.</param>
 	Bullet(Vector2* shipPos, float shipRot);
 
-	// Used for moving the bullets and checking if they should be removed.
+	// A bullet destructor for unloading the bullet image.
+	~Bullet();
+
+	// Used for moving the bullets and checking if they have exceeded their lifespan.
 	void Update();
 
 private:
-	// How fast the bullet should be travelling.
+	// The speed of the bullet object.
 	float shootSpeed = 15;
 
-	// The amount of frames that the bullet has existed for.
-	int maxLifetime = 45;
 	// How many frames the bullet can exist for before being destroyed.
+	int maxLifetime = 45;
+
+	// The amount of frames that the bullet has existed for.
 	int lifeExpended = 0;
 };
-

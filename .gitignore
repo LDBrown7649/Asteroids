@@ -19,7 +19,7 @@ mono_crash.*
 # Build results
 Asteroids/RaylibStarterCPP/[Dd]ebug/
 [Dd]ebugPublic/
-[Rr]elease/
+Asteroids/RaylibStarterCPP/[Rr]elease/
 [Rr]eleases/
 x86/
 [Aa][Rr][Mm]/

@@ -58,7 +58,7 @@ void GameController::Shutdown()
     // Deletes the ship and asteroids, and sets each pointer to the null pointer.
     delete ship;
     ship = nullptr;
-    asteroidHandler.Clear();
+    asteroidHandler.ClearAsteroids();
 }
 
 void GameController::LoadMenu()
@@ -110,7 +110,7 @@ void GameController::GameUpdate()
     CheckCollisions();
 
     // Checks which asteroids need to split or be removed.
-    asteroidHandler.Update();
+    asteroidHandler.UpdateAsteroids();
 
     // Updates the ship (and the attached bullet objects)
     ship->Update();
@@ -167,7 +167,7 @@ void GameController::ResetGame()
     scoreHandler.SetScore(0);
 
     // Resets the asteroids
-    asteroidHandler.Clear();
+    asteroidHandler.ClearAsteroids();
 
     // Resets the player ship object.
     delete ship;

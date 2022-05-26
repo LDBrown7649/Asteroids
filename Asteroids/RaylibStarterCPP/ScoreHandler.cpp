@@ -14,7 +14,7 @@ ScoreHandler::ScoreHandler(AsteroidHandler* asteroidHandler)
 
 void ScoreHandler::GetHighScore()
 {
-    // Opens the highscores file, reads the current highest score, and closes the file. 
+    // Opens the highscores file, reads the current highest score data, and closes the file. 
     std::ifstream file("highscores.dat", std::ios::in);
     file >> highscoreName;
     file >> highscore;
@@ -26,12 +26,12 @@ void ScoreHandler::GetName()
     // Resets the player's name.
     playerName = "";
     while (!IsKeyPressed(KEY_ENTER)) {
-        // Stores the key currently pressed (stores 0 if no key was pressed)
+        // Stores the key currently being pressed (stores 0 if no key was pressed)
         int letter = GetKeyPressed();
         int nameLength = playerName.size();
 
-        // Removes the last character from the name (provided there is at least one letter to remove).
         if (IsKeyPressed(KEY_BACKSPACE) && nameLength >= 1) {
+            // Removes the last character from the name if BACKSPACE was pressed (provided there is at least one letter to remove).
             playerName.pop_back();
         }
         // Adds the letter to the name (provided a key other than SPACE was entered, and the name is less than 10 characters).
@@ -70,12 +70,13 @@ void ScoreHandler::GetScores()
 
 void ScoreHandler::UpdateScores()
 {
+    // Retrieves the highscore values from the highscores file.
     GetScores();
     std::fstream file("highscores.dat", std::ios::out);
     // Compares the current score to each highscore value, going down the list.
     for (int i = 0; i < 5; i++) {
-        // If the score is greater than the current highscore, replace the values with each other.
-        if (currentScore > scores[i]) {
+        // If the score is greater than or equal to the current highscore, replace the values with each other.
+        if (currentScore >= scores[i]) {
             std::string tempName = names[i];
             int tempScore = scores[i];
             names[i] = playerName;
@@ -103,7 +104,7 @@ void ScoreHandler::ResetScores()
 
 void ScoreHandler::DrawScoreboard()
 {
-    // Draws the current highscores.
+    // Draws the current highscores to the screen.
     DrawText("HIGH SCORES!", 120, 100, 50, WHITE);
     for (int i = 0; i < 5; i++) {
         DrawText(std::to_string(scores[i]).c_str(), 200, 200 + 50 * i, 25, WHITE);
@@ -120,4 +121,14 @@ void ScoreHandler::DrawScores()
     DrawText("HIGHSCORE:", 370, 5, 18, WHITE);
     DrawText(highscoreName.c_str(), 370, 25, 18, WHITE);
     DrawText(std::to_string(highscore).c_str(), 500, 5, 18, WHITE);
+}
+
+void ScoreHandler::AddScore(int scoreToAdd)
+{
+    currentScore += scoreToAdd;
+}
+
+void ScoreHandler::SetScore(int scoreVal)
+{
+    currentScore = scoreVal;
 }

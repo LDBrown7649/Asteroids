@@ -8,23 +8,17 @@ class GameObject
 {
 public:
 
-	// A boolean reflecting whether or not a collision has occurred between two game objects.
+	// A boolean tracking whether or not a collision has occurred between two game objects.
 	bool collided = false;
 
-	// A method for drawing the game object to the screen.
+	// Draws the game object to the screen.
 	virtual void Draw();
 
-	// A method for updating the game object's position.
+	// Updates the game object's position and checks if it has gone out of bounds.
 	virtual void Update();
 
-	// A function for calculating the draw offset.
+	// A function for calculating the position a texture must be drawn from.
 	Vector2 DrawOffset();
-
-	// A function for returning the object's centre point.
-	Vector2 GetPos() { return pos; }
-
-	// A function for setting the position of a game object.
-	void SetPos(Vector2 value) { pos = value; }
 
 	// A function for checking if this game object has collided with another game object.
 	void CheckCollision(GameObject* other);
@@ -33,18 +27,22 @@ protected:
 	// The image representing the game object.
 	Texture img = Texture();
 
-	// Stores the game object's current position in the world.
+	// Stores the game object's current position on the screen.
 	Vector2 pos = { 0, 0 };
 
 	// The vector representing the game object's velocity.
 	Vector2 vel = { 0, 0 };
 
-	// The rotation and scale of the game object
+	// The scale the game object should be drawn at.
 	float scale = 1;
+
+	// The rotation of the game object's texture.
 	float rotation = 0;
 
-	// Functions for getting the width and height of the game object on the screen.
-	float GetWidth() { return scale * img.width; }
-	float GetHeight() { return scale * img.height; }
+	// Returns the width of the scaled image
+	float GetWidth();
+
+	// Returns the height of the scaled image
+	float GetHeight();
 };
 

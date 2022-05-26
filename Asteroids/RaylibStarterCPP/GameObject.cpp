@@ -3,10 +3,10 @@
 
 void GameObject::Draw()
 {
-	// Calculates the centre of the image.
+	// Calculates the position the texture should be drawn from to be centred around the game object pos.
 	Vector2 drawPos = this->DrawOffset();
 
-	// Draws the game object onto the screen.
+	// Draws the game object onto the screen as slightly transparent.
 	DrawTextureEx(img, drawPos, -rotation, scale, Color{ 255, 255, 255, 200 });
 }
 
@@ -33,25 +33,24 @@ void GameObject::Update()
 
 Vector2 GameObject::DrawOffset()
 {
-	// The distance from the edge of the object to the centre.
+	// The distances from the edge of the object to the centre (when not rotated).
 	float widthMoveDist = GetWidth() / 2;
 	float heightMoveDist = GetHeight() / 2;
 
-	// Moves the position of the object to be centred along the top edge.
-	Vector2 centredVec = { 
+	// Moves the position of the drawing to be centred along the top edge.
+	Vector2 drawOffset = { 
 		pos.x - (float)cos((rotation)*DEG2RAD) * widthMoveDist, 
 		pos.y + (float)sin((rotation)*DEG2RAD) * widthMoveDist 
 	};
 
-	// Moves the position of the object to be centred along the side edge.
-	centredVec.x -= (float)sin((rotation)*DEG2RAD) * heightMoveDist;
-	centredVec.y -= (float)cos((rotation)*DEG2RAD) * heightMoveDist;
+	// Moves the position of the drawing to be centred along the side edge.
+	drawOffset.x -= (float)sin((rotation)*DEG2RAD) * heightMoveDist;
+	drawOffset.y -= (float)cos((rotation)*DEG2RAD) * heightMoveDist;
 
-	return centredVec;
+	// Returns the vector that represents the position to draw the image from.
+	return drawOffset;
 }
 
-
-// A function for checking if collisions have occurred between any two game objects.
 void GameObject::CheckCollision(GameObject* other)
 {
 	// Calculates the distance between the centres of both objects.
@@ -65,4 +64,14 @@ void GameObject::CheckCollision(GameObject* other)
 		collided = true;
 		other->collided = true;
 	}
+}
+
+float GameObject::GetWidth()
+{
+	return scale * img.width;
+}
+
+float GameObject::GetHeight()
+{
+	return scale * img.height;
 }

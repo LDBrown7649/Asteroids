@@ -13,10 +13,10 @@ private:
 	// The player's current score.
 	int currentScore = 0;
 
-	// The highest score currently recorded in the data file.
+	// The highest score currently recorded in the highscores file.
 	int highscore = 0;
 
-	// The name associated with the highest recorded score.
+	// The name associated with the highest score in the highscores file.
 	std::string highscoreName = "";
 
 	// The scores stored in the highscores data file.
@@ -35,13 +35,7 @@ public:
 	// A constructor for the score handler that has a reference to an asteroid handler.
 	ScoreHandler(AsteroidHandler* asteroidHandler);
 
-	// Adds to the current score value by a specified amount.
-	void AddScore(int scoreToAdd) { currentScore += scoreToAdd; }
-
-	// Sets the score to a given value.
-	void SetScore(int scoreVal) { currentScore = scoreVal; }
-
-	// Gets the highscore value from the highscores data file.
+	// Gets the highscore values from the highscores data file.
 	void GetHighScore();
 
 	// Gets the player's name at the end of the game.
@@ -61,5 +55,11 @@ public:
 
 	// Draws the current score and the current highscore value.
 	void DrawScores();
+
+	// Adds to the current score value by a specified amount.
+	void AddScore(int scoreToAdd);
+
+	// Sets the score to a given value.
+	void SetScore(int scoreVal);
 };
 

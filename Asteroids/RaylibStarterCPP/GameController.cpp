@@ -27,7 +27,7 @@ void GameController::PlayGame()
         }
     }
 
-    // End the play loop and free any used memory.
+    // Free any used memory.
     Shutdown();
 }
 
@@ -35,15 +35,17 @@ void GameController::Setup()
 {
     // Creates a new ScoreHandler, passing in a reference to the asteroid handler.
     scoreHandler = ScoreHandler(&asteroidHandler);
-    // Opens the window with the current screen width and height.
+
+    // Opens the window with the correct screen width and height.
     InitWindow(screenWidth, screenHeight, "ASTEROIDS!");
 
-    // Seeds the random generator.
+    // Seeds the random generator with the current time.
     srand((int)time(nullptr));
 
     // Limits the game to running at 60 fps.
     SetTargetFPS(60);
 
+    // Calls the ResetGame function, putting the game into a state to be played when the play button is pressed.
     ResetGame();
 }
 
@@ -69,20 +71,21 @@ void GameController::LoadMenu()
     Button scoreBoardButton = Button(Vector2{ 170, 390 }, 250, 40, DARKBROWN, "SCOREBOARD");
     Button quitButton = Button(Vector2{ 170, 440 }, 250, 80, DARKBROWN, "QUIT GAME");
 
-    // Draws the background asteroids, as well as the buttons.
+    Vector2 mousePos = GetMousePosition();
+
     BeginDrawing();
     ClearBackground(BLACK);
+    // Draws the background asteroids, as well as the buttons.
     asteroidHandler.MenuAsteroidUpdate();
     DrawText("Asteroids!", 50, 80, 100, RAYWHITE);
-    playButton.DrawButton();
-    quitButton.DrawButton();
-    resetHighscoreButton.DrawButton();
-    scoreBoardButton.DrawButton();
+    playButton.DrawButton(&mousePos);
+    quitButton.DrawButton(&mousePos);
+    resetHighscoreButton.DrawButton(&mousePos);
+    scoreBoardButton.DrawButton(&mousePos);
     EndDrawing();
 
     // Checks if the player clicked on the screen.
     if (IsMouseButtonPressed(0)) {
-        Vector2 mousePos = GetMousePosition();
         if (playButton.CheckButtonOverlap(&mousePos)) {
             // Changes the game state from "Menu" to "Game" if the play button was pressed
             gamestate = GameMode::Game;
@@ -93,7 +96,7 @@ void GameController::LoadMenu()
             gamestate = GameMode::Quit;
         }
         else if (resetHighscoreButton.CheckButtonOverlap(&mousePos)) {
-            // Overwrites the saved highscores to a default state if the reset button was pressed.
+            // Sets the saved highscores to a default state if the reset button was pressed.
             scoreHandler.ResetScores();
         }
         else if (scoreBoardButton.CheckButtonOverlap(&mousePos)) {
@@ -109,17 +112,17 @@ void GameController::GameUpdate()
     // Checks which objects have collided with each other.
     CheckCollisions();
 
-    // Checks which asteroids need to split or be removed.
+    // Checks which asteroids need to split or be removed before updating the remaining asteroids' positions.
     asteroidHandler.UpdateAsteroids();
 
-    // Updates the ship (and the attached bullet objects)
+    // Updates the ship and the bullet objects
     ship->Update();
 
     // If the player ship has run out of lives, ask the player for their name and switch to the scoreboard.
     if (ship->GetLives() <= 0) {
-        gamestate = GameMode::Score;
         scoreHandler.GetName();
         scoreHandler.UpdateScores();
+        gamestate = GameMode::Score;
     }
 }
 
@@ -134,7 +137,7 @@ void GameController::CheckCollisions()
             bullet->CheckCollision(asteroid);
         }
 
-        // Checks collisions between each asteroid and the ship if they are not currently immune.
+        // Checks collisions between each asteroid and the ship if it is not currently immune.
         if (!ship->immune) {
             ship->CheckCollision(asteroid);
         }
@@ -149,15 +152,12 @@ void GameController::CheckCollisions()
 void GameController::GameDraw()
 {
     BeginDrawing();
-
     ClearBackground(BLACK);
-    // Draws the player's current score and the highest score to the screen
+    // Draws the player's current score and the highest score recorded to the screen
     scoreHandler.DrawScores();
-
-    // Draws each asteroid, the ship, and the bullets (as part of the ship drawing process).
+    // Draws each game object.
     asteroidHandler.DrawAsteroids();
     ship->Draw();
-
     EndDrawing();
 }
 
@@ -166,41 +166,44 @@ void GameController::ResetGame()
     // Resets the current score to 0.
     scoreHandler.SetScore(0);
 
-    // Resets the asteroids
+    // Removes all asteroids from the asteroid handler.
     asteroidHandler.ClearAsteroids();
 
     // Resets the player ship object.
     delete ship;
     ship = new PlayerShip();
 
+    // Accesses the current highscore value.
     scoreHandler.GetHighScore();
 }
 
 void GameController::Scoreboard() {
-    // Creates a button for the player to press to restart the game, and one to access the menu.
+    // Creates a button for the player to press to restart the game, and another button to access the menu.
     Button playButton = Button(Vector2{ 170, 500 }, 250, 60, DARKBROWN, "PLAY AGAIN");
     Button menuButton = Button(Vector2{ 20, 20 }, 150, 50, DARKBROWN, "MENU");
+
+    Vector2 mousePos = GetMousePosition();
 
     BeginDrawing();
     ClearBackground(BLACK);
     // Draws the asteroids in the background of the scene.
     asteroidHandler.MenuAsteroidUpdate();
     // Draws the buttons for the player to press
-    playButton.DrawButton();
-    menuButton.DrawButton();
+    playButton.DrawButton(&mousePos);
+    menuButton.DrawButton(&mousePos);
+    // Draws the scoreboard values to the screen.
     scoreHandler.DrawScoreboard();
-    
     EndDrawing();
+
     // Checks if the player clicked on the screen.
     if (IsMouseButtonPressed(0)) {
-        Vector2 mousePos = GetMousePosition();
         if (playButton.CheckButtonOverlap(&mousePos)) {
-            ResetGame();
-            // Moves the game state from "Score" to "Game" if the play button was pressed.
+            // Changes the game state from "Score" to "Game" if the play button was pressed.
             gamestate = GameMode::Game;
+            ResetGame();
         }
         if (menuButton.CheckButtonOverlap(&mousePos)) {
-            // Moves the game state from "Score" to "Game" if the menu button was pressed.
+            // Changes the game state from "Score" to "Menu" if the menu button was pressed.
             gamestate = GameMode::Menu;
         }
     }

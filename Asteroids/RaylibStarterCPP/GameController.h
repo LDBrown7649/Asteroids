@@ -5,23 +5,25 @@
 #include "AsteroidHandler.h"
 #include "ScoreHandler.h"
 
-// An enum for classifying different states the game can be in.
-enum class GameMode {
-	Menu,
-	Game,
-	Score,
-	Quit
-};
-
 class GameController
 {
 private: // Variables
 
-	// The current game state. Changing this value will cause different scene objects to load.
+	// An enum representing different states the game can be in.
+	enum class GameMode {
+		Menu,
+		Game,
+		Score,
+		Quit
+	};
+
+	// The current game state. Changing this value will cause different scenes to load.
 	GameMode gamestate = GameMode::Menu;
 
-	// The dimensions of the game window.
+	// The width of the screen.
 	int screenWidth = 600;
+
+	// The height of the screen.
 	int screenHeight = 600;
 
 	// The ship the player controls in the game.
@@ -30,10 +32,10 @@ private: // Variables
 	// A boolean indicating if the game should end or not.
 	bool endgame = false;
 
-	std::vector<Button*> buttons;
-
+	// The asteroid handler that manages the asteroids throughout the game.
 	AsteroidHandler asteroidHandler;
 
+	// The score handler that tracks and updates the player's score, as well as the recorded high scores.
 	ScoreHandler scoreHandler;
 
 public: // Functions
@@ -43,7 +45,7 @@ public: // Functions
 
 private: // Functions
 
-	// Prepares the game to be played by opening the game window and seeding the random generator.
+	// Prepares the game to be played by setting up background objects such as the score handler and the random generator.
 	void Setup();
 
 	// Updates the scoreboard, closes the window, and deletes any remaining assets.
@@ -51,9 +53,6 @@ private: // Functions
 
 	// Loads, updates, and draws objects and buttons on the main menu.
 	void LoadMenu();
-
-	// Displays the scoreboard at the end of the game. This displays previous highscores.
-	void Scoreboard();
 
 	// Checks for collisions or changes in the scene before moving each game object to its new location.
 	void GameUpdate();
@@ -66,5 +65,8 @@ private: // Functions
 
 	// Resets important game features so that the game can be played again.
 	void ResetGame();
+
+	// Displays the scoreboard. This displays previous highscores.
+	void Scoreboard();
 };
 
